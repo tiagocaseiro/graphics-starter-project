@@ -9,9 +9,18 @@ link_directories(libs)
 
 include_directories(src src/GLFW)
 
-add_executable(starter-project src/main.cpp src/Window.cpp src/Logger.cpp)
+add_executable(starter-project 
+    src/main.cpp 
+    src/Window.cpp 
+    src/Logger.cpp 
+    src/glad.cpp 
+    src/opengl/OGLRenderer.cpp 
+    src/opengl/OGLRenderData.cpp
+)
 
 set_target_properties(starter-project PROPERTIES LINKER_LANGUAGE CXX)
+
+target_include_directories(starter-project PUBLIC src/glm)
 
 target_compile_features(starter-project PUBLIC cxx_std_20)
 
@@ -19,3 +28,5 @@ find_package(OpenGL REQUIRED)
 
 target_link_libraries(starter-project glfw3)
 target_link_libraries(starter-project OpenGL::GL)
+
+add_subdirectory(src)
