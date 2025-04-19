@@ -12,5 +12,9 @@ public:
     void cleanup();
 
 private:
+    void handleWindowCloseEvents();
+    void handleKeyEvents(const int key, const int scancode, const int action, const int mods);
+    void handleMouseButtonEvents(const int button, const int action, const int mods);
+
     GLFWwindow* mWindow = nullptr;
 };
