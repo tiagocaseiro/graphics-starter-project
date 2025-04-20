@@ -16,6 +16,9 @@ add_executable(starter-project
     src/glad.cpp 
     src/opengl/OGLRenderer.cpp 
     src/opengl/OGLRenderData.cpp
+    src/opengl/FrameBuffer.cpp
+    src/opengl/VertexBuffer.cpp
+    src/opengl/Texture.cpp
 )
 
 set_target_properties(starter-project PROPERTIES LINKER_LANGUAGE CXX)

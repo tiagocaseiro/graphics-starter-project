@@ -1,8 +1,8 @@
 #include "OGLRenderer.h"
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 
 bool OGLRenderer::init(const int width, const int height)
 {
@@ -16,10 +16,10 @@ bool OGLRenderer::init(const int width, const int height)
         return false;
     }
 
-    // if(mFrameBuffer.init(width, height) == false)
-    // {
-    //     return false;
-    // }
+    if(mFramebuffer.init(width, height) == false)
+    {
+        return false;
+    }
 
     // if(mTex.loadTexture("textures/crate.png") == false)
     // {

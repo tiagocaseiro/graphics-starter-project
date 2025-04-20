@@ -1,5 +1,10 @@
 #pragma once
 
+#include "FrameBuffer.h"
+#include "Texture.h"
+#include "VertexBuffer.h"
+
+
 class OGLMesh;
 
 class OGLRenderer
@@ -13,9 +18,9 @@ public:
 
 private:
     // Shader mBasicShader;
-    // FrameBuffer mFrameBuffer;
-    // VertexBuffer mVertexBuffer;
-    // Texture mTex;
+    Framebuffer mFramebuffer;
+    VertexBuffer mVertexBuffer;
+    Texture mTex;
 
     int mTriangleCount = 0;
 };
