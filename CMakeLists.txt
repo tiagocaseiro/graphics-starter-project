@@ -19,6 +19,7 @@ add_executable(starter-project
     src/opengl/FrameBuffer.cpp
     src/opengl/VertexBuffer.cpp
     src/opengl/Texture.cpp
+    src/opengl/Shader.cpp
 )
 
 set_target_properties(starter-project PROPERTIES LINKER_LANGUAGE CXX)
@@ -32,4 +33,5 @@ find_package(OpenGL REQUIRED)
 target_link_libraries(starter-project glfw3)
 target_link_libraries(starter-project OpenGL::GL)
 
+add_subdirectory(shaders)
 add_subdirectory(src)

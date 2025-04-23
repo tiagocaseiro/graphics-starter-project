@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.31)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/basic.vert
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/basic.frag 
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+     
