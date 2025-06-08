@@ -9,6 +9,8 @@ bool Texture::loadTexture(const std::string& textureFilename)
     int mTexHeight      = 0;
     int mNumberChannels = 0;
 
+    GLenum constexpr fmt[] = {GL_RED, GL_RG, GL_RGB, GL_RGBA};
+
     stbi_set_flip_vertically_on_load(true);
 
     unsigned char* textureData = stbi_load(textureFilename.c_str(), &mTexWidth, &mTexHeight, &mNumberChannels, 0);
@@ -27,7 +29,8 @@ bool Texture::loadTexture(const std::string& textureFilename)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mTexWidth, mTexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+    glTexImage2D(GL_TEXTURE_2D, 0, fmt[mNumberChannels - 1], mTexWidth, mTexHeight, 0, fmt[mNumberChannels - 1],
+                 GL_UNSIGNED_BYTE, textureData);
 
     glGenerateMipmap(GL_TEXTURE_2D);
 

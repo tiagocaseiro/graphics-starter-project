@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-class OGLMesh;
+#include "OGLRenderData.h"
 
 class VertexBuffer
 {

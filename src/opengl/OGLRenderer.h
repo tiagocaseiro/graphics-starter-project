@@ -1,11 +1,10 @@
 #pragma once
 
 #include "FrameBuffer.h"
+#include "OGLRenderData.h"
+#include "Shader.h"
 #include "Texture.h"
 #include "VertexBuffer.h"
-
-
-class OGLMesh;
 
 class OGLRenderer
 {
@@ -17,7 +16,7 @@ public:
     void draw();
 
 private:
-    // Shader mBasicShader;
+    Shader mBasicShader;
     Framebuffer mFramebuffer;
     VertexBuffer mVertexBuffer;
     Texture mTex;

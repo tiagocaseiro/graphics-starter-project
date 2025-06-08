@@ -1,8 +1,14 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
+#include "Model.h"
+#include "opengl/OGLRenderer.h"
+
 struct GLFWwindow;
+
+class Model;
 
 class Window
 {
@@ -17,4 +23,7 @@ private:
     void handleMouseButtonEvents(const int button, const int action, const int mods);
 
     GLFWwindow* mWindow = nullptr;
+
+    std::unique_ptr<OGLRenderer> mRenderer;
+    std::unique_ptr<Model> mModel;
 };

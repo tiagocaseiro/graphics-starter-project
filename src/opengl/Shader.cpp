@@ -37,6 +37,7 @@ bool Shader::loadShaders(const std::string& vertexShaderFilename, const std::str
 
 void Shader::use()
 {
+    glUseProgram(mShaderProgram);
 }
 
 void Shader::cleanup()

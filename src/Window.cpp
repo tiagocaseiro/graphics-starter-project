@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include <memory>
+
 #include <GLFW/glfw3.h>
 
 #include "Logger.h"
@@ -12,7 +14,9 @@ bool Window::init(const int width, const int height, const std::string& title)
         return false;
     }
 
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     mWindow = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
 
@@ -42,12 +46,28 @@ bool Window::init(const int width, const int height, const std::string& title)
         thisWindow->handleMouseButtonEvents(button, action, mods);
     });
 
+    mRenderer = std::make_unique<OGLRenderer>();
+    if(mRenderer->init(width, height) == false)
+    {
+        Logger::log(1, "%s: Failed to initialize renderer\n", __FUNCTION__);
+        glfwTerminate();
+        return false;
+    }
+
+    glfwSetWindowUserPointer(mWindow, mRenderer.get());
+
+    glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
+        OGLRenderer* renderer = static_cast<OGLRenderer*>(glfwGetWindowUserPointer(window));
+        renderer->setSize(width, height);
+    });
     // glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     // if(glfwRawMouseMotionSupported())
     // {
     //     glfwSetInputMode(mWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     // }
 
+    mModel = std::make_unique<Model>();
+    mModel->init();
     Logger::log(1, "%s: Window successfully initialized\n", __FUNCTION__);
     return true;
 }
@@ -56,25 +76,12 @@ void Window::mainLoop()
 {
     glfwSwapInterval(1);
 
-    float color = 0.0f;
+    mRenderer->uploadData(mModel->getVertexData());
 
     while(glfwWindowShouldClose(mWindow) == false)
     {
-
-        if(color > 1.0f)
-        {
-            color = 0;
-        }
-        else
-        {
-            color += 0.01;
-        }
-
-        glClearColor(color, color, color, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
+        mRenderer->draw();
         glfwSwapBuffers(mWindow);
-
         glfwPollEvents();
     }
 }

@@ -12,10 +12,11 @@ include_directories(src src/GLFW)
 add_executable(starter-project 
     src/main.cpp 
     src/Window.cpp 
+    src/Model.cpp 
     src/Logger.cpp 
     src/glad.cpp 
-    src/opengl/OGLRenderer.cpp 
     src/opengl/OGLRenderData.cpp
+    src/opengl/OGLRenderer.cpp 
     src/opengl/FrameBuffer.cpp
     src/opengl/VertexBuffer.cpp
     src/opengl/Texture.cpp
@@ -34,4 +35,4 @@ target_link_libraries(starter-project glfw3)
 target_link_libraries(starter-project OpenGL::GL)
 
 add_subdirectory(shaders)
-add_subdirectory(src)
+add_subdirectory(textures)
