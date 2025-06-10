@@ -32,6 +32,11 @@ bool OGLRenderer::init(const int width, const int height)
     {
         return false;
     }
+
+    if(mChangedShader.loadShaders("../shaders/changed.vert", "../shaders/changed.frag") == false)
+    {
+        return false;
+    }
     return true;
 }
 
@@ -44,6 +49,7 @@ void OGLRenderer::setSize(const int width, const int height)
 void OGLRenderer::cleanup()
 {
     mBasicShader.cleanup();
+    mChangedShader.cleanup();
     mFramebuffer.cleanup();
     mVertexBuffer.cleanup();
     mTex.cleanup();
@@ -62,7 +68,10 @@ void OGLRenderer::draw()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_CULL_FACE);
 
-    mBasicShader.use();
+    if(mActiveShader)
+    {
+        mActiveShader->use();
+    }
     mTex.bind();
     mVertexBuffer.bind();
     mVertexBuffer.draw(GL_TRIANGLES, 0, mTriangleCount);
@@ -71,4 +80,19 @@ void OGLRenderer::draw()
     mFramebuffer.bind();
 
     mFramebuffer.drawToScreen();
+}
+
+void OGLRenderer::handleKeyEvents(const int key, const int scancode, const int action, const int mods)
+{
+    if(key == GLFW_KEY_SPACE && action == GLFW_RELEASE)
+    {
+        if(mActiveShader == &mBasicShader)
+        {
+            mActiveShader = &mChangedShader;
+        }
+        else
+        {
+            mActiveShader = &mBasicShader;
+        }
+    }
 }

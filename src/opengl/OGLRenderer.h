@@ -14,12 +14,16 @@ public:
     void cleanup();
     void uploadData(const OGLMesh& vertexData);
     void draw();
+    void handleKeyEvents(const int key, const int scancode, const int action, const int mods);
 
 private:
     Shader mBasicShader;
+    Shader mChangedShader;
     Framebuffer mFramebuffer;
     VertexBuffer mVertexBuffer;
     Texture mTex;
+
+    Shader* mActiveShader = &mBasicShader;
 
     int mTriangleCount = 0;
 };

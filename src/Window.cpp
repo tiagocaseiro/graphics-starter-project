@@ -36,11 +36,6 @@ bool Window::init(const int width, const int height, const std::string& title)
         thisWindow->handleWindowCloseEvents();
     });
 
-    glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-        Window* thisWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-        thisWindow->handleKeyEvents(key, scancode, action, mods);
-    });
-
     glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
         Window* thisWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
         thisWindow->handleMouseButtonEvents(button, action, mods);
@@ -55,6 +50,12 @@ bool Window::init(const int width, const int height, const std::string& title)
     }
 
     glfwSetWindowUserPointer(mWindow, mRenderer.get());
+
+    glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        OGLRenderer* mRenderer = static_cast<OGLRenderer*>(glfwGetWindowUserPointer(window));
+        // thisWindow->handleKeyEvents(key, scancode, action, mods);
+        mRenderer->handleKeyEvents(key, scancode, action, mods);
+    });
 
     glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
         OGLRenderer* renderer = static_cast<OGLRenderer*>(glfwGetWindowUserPointer(window));

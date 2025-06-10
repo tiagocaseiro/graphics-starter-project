@@ -11,6 +11,13 @@ void Model::init()
     mVertexData.vertices[4].position = {0.5, -0.5, 0.5};
     mVertexData.vertices[5].position = {0.5, 0.5, 0.5};
 
+    mVertexData.vertices[0].color = {0.0, 0.0, 1.0};
+    mVertexData.vertices[1].color = {0.0, 1.0, 1.0};
+    mVertexData.vertices[2].color = {1.0, 1.0, 0.0};
+    mVertexData.vertices[3].color = {1.0, 0.0, 1.0};
+    mVertexData.vertices[4].color = {0.0, 1.0, 0.0};
+    mVertexData.vertices[5].color = {1.0, 1.0, 1.0};
+
     mVertexData.vertices[0].uv = {0.0, 0.0};
     mVertexData.vertices[1].uv = {1.0, 1.0};
     mVertexData.vertices[2].uv = {0.0, 1.0};
