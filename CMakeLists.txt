@@ -9,19 +9,10 @@ link_directories(libs)
 
 include_directories(src src/GLFW)
 
-add_executable(starter-project 
-    src/main.cpp 
-    src/Window.cpp 
-    src/Model.cpp 
-    src/Logger.cpp 
-    src/glad.cpp 
-    src/opengl/OGLRenderData.cpp
-    src/opengl/OGLRenderer.cpp 
-    src/opengl/FrameBuffer.cpp
-    src/opengl/VertexBuffer.cpp
-    src/opengl/Texture.cpp
-    src/opengl/Shader.cpp
-)
+file(GLOB SOURCE_FILES_PATH src/*.cpp)
+file(GLOB OPEN_GL_FILES_PATH src/opengl/*.cpp)
+
+add_executable(starter-project ${SOURCE_FILES_PATH} ${OPEN_GL_FILES_PATH})
 
 set_target_properties(starter-project PROPERTIES LINKER_LANGUAGE CXX)
 
