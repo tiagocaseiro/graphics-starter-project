@@ -9,10 +9,10 @@ link_directories(libs)
 
 include_directories(src src/GLFW)
 
-file(GLOB SOURCE_FILES_PATH src/*.cpp)
-file(GLOB OPEN_GL_FILES_PATH src/opengl/*.cpp)
 
-add_executable(starter-project ${SOURCE_FILES_PATH} ${OPEN_GL_FILES_PATH})
+file(GLOB SOURCE_FILES_PATH src/opengl/*.cpp src/*.cpp src/imgui/*.cpp)
+
+add_executable(starter-project ${SOURCE_FILES_PATH})
 
 set_target_properties(starter-project PROPERTIES LINKER_LANGUAGE CXX)
 

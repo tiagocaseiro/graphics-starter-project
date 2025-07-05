@@ -5,7 +5,7 @@
 
 #include <GLFW/glfw3.h>
 
-bool OGLRenderer::init(const int width, const int height)
+bool OGLRenderer::init(const int width, const int height, GLFWwindow* window)
 {
     if(gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == false)
     {
@@ -22,8 +22,9 @@ bool OGLRenderer::init(const int width, const int height)
         return false;
     }
 
-    mWidth  = width;
-    mHeight = height;
+    mRenderData.rdWidth  = width;
+    mRenderData.rdHeight = height;
+    mRenderData.rdWindow = window;
 
     mVertexBuffer.init();
 
@@ -43,13 +44,15 @@ bool OGLRenderer::init(const int width, const int height)
     {
         return false;
     }
+
+    mUserInterface.init(mRenderData);
     return true;
 }
 
 void OGLRenderer::setSize(const int width, const int height)
 {
-    mWidth  = width;
-    mHeight = height;
+    mRenderData.rdWidth  = width;
+    mRenderData.rdHeight = height;
 
     mFramebuffer.resize(width, height);
     glViewport(0, 0, width, height);
@@ -57,6 +60,7 @@ void OGLRenderer::setSize(const int width, const int height)
 
 void OGLRenderer::cleanup()
 {
+    mUserInterface.cleanup();
     mBasicShader.cleanup();
     mChangedShader.cleanup();
     mFramebuffer.cleanup();
@@ -67,7 +71,7 @@ void OGLRenderer::cleanup()
 
 void OGLRenderer::uploadData(const OGLMesh& vertexData)
 {
-    mTriangleCount = vertexData.vertices.size();
+    mRenderData.rdTriangleCount = vertexData.vertices.size();
     mVertexBuffer.uploadData(vertexData);
 }
 
@@ -82,8 +86,9 @@ void OGLRenderer::draw()
     glm::vec3 cameraLookAtPosition = glm::vec3(0.0, 0.0, 0.0);
     glm::vec3 cameraUpVector       = glm::vec3(0.0, 1.0, 0.0);
 
-    mProjectionMatrix =
-        glm::perspective(glm::radians(90.0f), static_cast<float>(mWidth) / static_cast<float>(mHeight), 0.1f, 100.0f);
+    mProjectionMatrix = glm::perspective(
+        glm::radians(90.0f), static_cast<float>(mRenderData.rdWidth) / static_cast<float>(mRenderData.rdHeight), 0.1f,
+        100.0f);
 
     float t = glfwGetTime();
 
@@ -108,12 +113,15 @@ void OGLRenderer::draw()
     m_UniformBuffer.uploadUboData(mViewMatrix, mProjectionMatrix);
     mTex.bind();
     mVertexBuffer.bind();
-    mVertexBuffer.draw(GL_TRIANGLES, 0, mTriangleCount);
+    mVertexBuffer.draw(GL_TRIANGLES, 0, mRenderData.rdTriangleCount);
     mVertexBuffer.unbind();
     mTex.bind();
     mFramebuffer.bind();
 
     mFramebuffer.drawToScreen();
+
+    mUserInterface.createFrame(mRenderData);
+    mUserInterface.render();
 }
 
 void OGLRenderer::handleKeyEvents(const int key, const int scancode, const int action, const int mods)

@@ -42,7 +42,7 @@ bool Window::init(const int width, const int height, const std::string& title)
     });
 
     mRenderer = std::make_unique<OGLRenderer>();
-    if(mRenderer->init(width, height) == false)
+    if(mRenderer->init(width, height, mWindow) == false)
     {
         Logger::log(1, "%s: Failed to initialize renderer\n", __FUNCTION__);
         glfwTerminate();
@@ -69,6 +69,7 @@ bool Window::init(const int width, const int height, const std::string& title)
 
     mModel = std::make_unique<Model>();
     mModel->init();
+
     Logger::log(1, "%s: Window successfully initialized\n", __FUNCTION__);
     return true;
 }

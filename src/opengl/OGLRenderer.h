@@ -5,12 +5,15 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "UniformBuffer.h"
+#include "UserInterface.h"
 #include "VertexBuffer.h"
+
+struct GLFWWindow;
 
 class OGLRenderer
 {
 public:
-    bool init(const int width, const int height);
+    bool init(const int width, const int height, GLFWwindow* window);
     void setSize(const int width, const int height);
     void cleanup();
     void uploadData(const OGLMesh& vertexData);
@@ -29,8 +32,6 @@ private:
     glm::mat4 mProjectionMatrix = glm::mat4(1.0);
 
     Shader* mActiveShader = &mBasicShader;
-
-    int mWidth         = 1;
-    int mHeight        = 1;
-    int mTriangleCount = 0;
+    OGLRenderData mRenderData;
+    UserInterface mUserInterface;
 };

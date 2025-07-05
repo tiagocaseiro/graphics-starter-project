@@ -1,0 +1,51 @@
+#include "UserInterface.h"
+
+#include <string>
+
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
+
+#include "OGLRenderData.h"
+
+void UserInterface::init(const OGLRenderData& renderData)
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOpenGL(renderData.rdWindow, true);
+    static constexpr auto glslVersion = "#version 460 core";
+    ImGui_ImplOpenGL3_Init(glslVersion);
+}
+
+void UserInterface::createFrame(const OGLRenderData& renderData)
+{
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGuiWindowFlags imguiWindowFlags = 0;
+    ImGui::SetNextWindowBgAlpha(0.8f);
+    ImGui::Begin("Control", nullptr, imguiWindowFlags);
+    ImGui::Text("Triangles:");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(renderData.rdTriangleCount).c_str());
+
+    std::string windowDims = std::to_string(renderData.rdWidth) + "x" + std::to_string(renderData.rdHeight);
+    ImGui::Text("Window Dimensions:");
+    ImGui::SameLine();
+    ImGui::Text(windowDims.c_str());
+
+    ImGui::End();
+}
+
+void UserInterface::render()
+{
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void UserInterface::cleanup()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
