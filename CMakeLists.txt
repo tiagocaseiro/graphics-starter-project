@@ -10,7 +10,7 @@ link_directories(libs)
 include_directories(src src/GLFW)
 
 
-file(GLOB SOURCE_FILES_PATH src/opengl/*.cpp src/*.cpp src/imgui/*.cpp)
+file(GLOB SOURCE_FILES_PATH src/opengl/*.cpp src/tools/*.cpp src/*.cpp src/imgui/*.cpp)
 
 add_executable(starter-project ${SOURCE_FILES_PATH})
 

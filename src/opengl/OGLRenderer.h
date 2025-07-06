@@ -7,6 +7,7 @@
 #include "UniformBuffer.h"
 #include "UserInterface.h"
 #include "VertexBuffer.h"
+#include "tools/Timer.h"
 
 struct GLFWWindow;
 
@@ -34,4 +35,5 @@ private:
     Shader* mActiveShader = &mBasicShader;
     OGLRenderData mRenderData;
     UserInterface mUserInterface;
+    Timer mUIGenerateTimer;
 };

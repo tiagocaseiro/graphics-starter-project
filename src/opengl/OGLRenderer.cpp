@@ -127,7 +127,9 @@ void OGLRenderer::draw()
 
     mFramebuffer.drawToScreen();
 
+    mUIGenerateTimer.start();
     mUserInterface.createFrame(mRenderData);
+    mRenderData.rdUIGenerateTime = mUIGenerateTimer.stop();
     mUserInterface.render();
 }
 
