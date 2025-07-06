@@ -22,4 +22,5 @@ struct OGLRenderData
     unsigned int rdWidth         = 0;
     unsigned int rdHeight        = 0;
     unsigned int rdTriangleCount = 0;
+    float rdFrameTime            = 0.0f;
 };
