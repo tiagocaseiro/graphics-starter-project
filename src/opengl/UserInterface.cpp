@@ -62,9 +62,11 @@ void UserInterface::createFrame(const OGLRenderData& renderData)
     ImGui::SameLine();
     ImGui::Text(windowDims.c_str());
 
-    // ImGui::Text("Camera Position:");
-    // ImGui::SameLine();
-    // ImGui::Text("%s", std::to_string(renderData.rdCameraWorldPosition).c_str());
+    ImGui::Text("Camera Position:");
+    ImGui::SameLine();
+    ImGui::Text("%s %s %s", std::to_string(renderData.rdCameraWorldPosition.x).c_str(),
+                std::to_string(renderData.rdCameraWorldPosition.y).c_str(),
+                std::to_string(renderData.rdCameraWorldPosition.z).c_str());
 
     ImGui::End();
 }
