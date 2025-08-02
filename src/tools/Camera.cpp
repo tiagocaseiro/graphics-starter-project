@@ -2,7 +2,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-glm::mat4 Camera::getViewMatrix(const OGLRenderData& renderData)
+glm::mat4 Camera::getViewMatrix(OGLRenderData& renderData)
 {
     const float azimRad = glm::radians(renderData.rdViewAzimuth);
     const float elevRad = glm::radians(renderData.rdViewElevation);
@@ -13,5 +13,16 @@ glm::mat4 Camera::getViewMatrix(const OGLRenderData& renderData)
     const float cosElev = glm::cos(elevRad);
 
     mViewDirection = glm::normalize(glm::vec3(sinAzim * cosElev, sinElev, -cosAzim * cosElev));
-    return glm::lookAt(mWorldPos, mWorldPos + mViewDirection, mWorldUpVector);
+
+    static const glm::vec3 mWorldUpVector = glm::vec3(0.0f, 1.0f, 0.0f);
+
+    mRightDirection = glm::normalize(glm::cross(mViewDirection, mWorldUpVector));
+    mUpDirection    = glm::normalize(glm::cross(mRightDirection, mViewDirection));
+
+    renderData.rdCameraWorldPosition += renderData.rdTickDiff * renderData.rdMoveForward * mViewDirection +
+                                        renderData.rdTickDiff * renderData.rdMoveRight * mRightDirection +
+                                        renderData.rdTickDiff * renderData.rdMoveUp * mUpDirection;
+
+    return glm::lookAt(renderData.rdCameraWorldPosition, renderData.rdCameraWorldPosition + mViewDirection,
+                       mUpDirection);
 }
