@@ -49,10 +49,22 @@ void UserInterface::createFrame(const OGLRenderData& renderData)
     ImGui::SameLine();
     ImGui::Text(std::to_string(renderData.rdTriangleCount).c_str());
 
+    ImGui::Text("View Azimuth:");
+    ImGui::SameLine();
+    ImGui::Text("%s", std::to_string(renderData.rdViewAzimuth).c_str());
+
+    ImGui::Text("View Elevation:");
+    ImGui::SameLine();
+    ImGui::Text("%s", std::to_string(renderData.rdViewElevation).c_str());
+
     std::string windowDims = std::to_string(renderData.rdWidth) + "x" + std::to_string(renderData.rdHeight);
     ImGui::Text("Window Dimensions:");
     ImGui::SameLine();
     ImGui::Text(windowDims.c_str());
+
+    // ImGui::Text("Camera Position:");
+    // ImGui::SameLine();
+    // ImGui::Text("%s", std::to_string(renderData.rdCameraWorldPosition).c_str());
 
     ImGui::End();
 }

@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <utility>
 
+#define LOG_VAR(var) std::cout << #var << ": " << var << std::endl;
+
 class Logger
 {
 public:

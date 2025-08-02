@@ -36,11 +36,6 @@ bool Window::init(const int width, const int height, const std::string& title)
         thisWindow->handleWindowCloseEvents();
     });
 
-    glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
-        Window* thisWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-        thisWindow->handleMouseButtonEvents(button, action, mods);
-    });
-
     mRenderer = std::make_unique<OGLRenderer>();
     if(mRenderer->init(width, height, mWindow) == false)
     {
@@ -49,23 +44,29 @@ bool Window::init(const int width, const int height, const std::string& title)
         return false;
     }
 
-    glfwSetWindowUserPointer(mWindow, mRenderer.get());
+    glfwSetWindowUserPointer(mWindow, this);
+
+    glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
+        Window* mWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        mWindow->getRenderer()->handleMouseButtonEvents(button, action, mods);
+    });
+
+    glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double xPos, double yPos) {
+        Window* mWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        mWindow->getRenderer()->handleMousePositionEvents(xPos, yPos);
+    });
 
     glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-        OGLRenderer* mRenderer = static_cast<OGLRenderer*>(glfwGetWindowUserPointer(window));
-        // thisWindow->handleKeyEvents(key, scancode, action, mods);
-        mRenderer->handleKeyEvents(key, scancode, action, mods);
+        Window* mWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        mWindow->handleKeyEvents(key, scancode, action, mods);
     });
 
     glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
-        OGLRenderer* renderer = static_cast<OGLRenderer*>(glfwGetWindowUserPointer(window));
-        renderer->setSize(width, height);
+        Window* mWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        mWindow->getRenderer()->setSize(width, height);
     });
-    // glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    // if(glfwRawMouseMotionSupported())
-    // {
-    //     glfwSetInputMode(mWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-    // }
+
+    glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     mModel = std::make_unique<Model>();
     mModel->init();
@@ -108,6 +109,10 @@ void Window::handleKeyEvents(const int key, const int scancode, const int action
     {
         case GLFW_RELEASE:
             actionName = "released";
+            if(key == GLFW_KEY_ESCAPE)
+            {
+                glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
+            }
             break;
         case GLFW_PRESS:
             actionName = "press";
@@ -122,46 +127,5 @@ void Window::handleKeyEvents(const int key, const int scancode, const int action
 
     const char* keyName = glfwGetKeyName(key, 0);
 
-    Logger::log(1, "%s: key %s (key %i, scandcode %i) %s\n", __FUNCTION__, keyName, key, scancode, actionName.c_str());
-}
-
-void Window::handleMouseButtonEvents(const int button, const int action, const int mods)
-{
-    std::string actionName;
-
-    switch(action)
-    {
-        case GLFW_RELEASE:
-            actionName = "released";
-            break;
-        case GLFW_PRESS:
-            actionName = "press";
-            break;
-        case GLFW_REPEAT:
-            actionName = "repeat";
-            break;
-        default:
-            actionName = "invalid";
-            break;
-    }
-
-    std::string mouseButtonName;
-
-    switch(button)
-    {
-        case GLFW_MOUSE_BUTTON_LEFT:
-            mouseButtonName = "left";
-            break;
-        case GLFW_MOUSE_BUTTON_MIDDLE:
-            mouseButtonName = "middle";
-            break;
-        case GLFW_MOUSE_BUTTON_RIGHT:
-            mouseButtonName = "right";
-            break;
-        default:
-            mouseButtonName = "other";
-            break;
-    }
-
-    Logger::log(1, "%s: %s mouse button (%i) %s\n", __FUNCTION__, mouseButtonName.c_str(), button, actionName.c_str());
+    mRenderer->handleKeyEvents(key, scancode, action, mods);
 }
