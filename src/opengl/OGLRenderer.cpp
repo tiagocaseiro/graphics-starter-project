@@ -88,7 +88,7 @@ void OGLRenderer::draw()
     float frameStartTime = glfwGetTime();
 
     mRenderData.rdFrameTime = frameStartTime - previousFrameStartTime;
-    mRenderData.rdTickDiff  = frameStartTime - mLastTickTime;
+    mRenderData.rdTickDiff  = frameStartTime - previousFrameStartTime;
 
     previousFrameStartTime = frameStartTime;
     mFramebuffer.bind();
@@ -193,12 +193,12 @@ void OGLRenderer::handleMousePositionEvents(double xPos, double yPos)
 {
     ImGuiIO& io = ImGui::GetIO();
 
+    io.AddMousePosEvent(static_cast<float>(xPos), static_cast<float>(yPos));
+
     if(io.WantCaptureMouse)
     {
         return;
     }
-
-    io.AddMousePosEvent(static_cast<float>(xPos), static_cast<float>(yPos));
 
     const int mouseMoveRelX = static_cast<int>(xPos) - mMouseXPos;
     const int mouseMoveRelY = static_cast<int>(yPos) - mMouseYPos;
