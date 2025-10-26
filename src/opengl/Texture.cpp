@@ -22,7 +22,7 @@ bool Texture::loadTexture(const std::string& textureFilename)
     }
 
     glGenTextures(1, &mTexture);
-    glBindTexture(GL_TEXTURE, mTexture);
+    glBindTexture(GL_TEXTURE_2D, mTexture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
