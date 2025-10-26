@@ -5,10 +5,8 @@ project(starter-project LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-link_directories(libs)
 
-include_directories(src src/GLFW)
-
+include_directories(src src/glfw/include)
 
 file(GLOB SOURCE_FILES_PATH src/opengl/*.cpp src/tools/*.cpp src/*.cpp src/imgui/*.cpp)
 
@@ -22,8 +20,9 @@ target_compile_features(starter-project PUBLIC cxx_std_20)
 
 find_package(OpenGL REQUIRED)
 
-target_link_libraries(starter-project glfw3)
 target_link_libraries(starter-project OpenGL::GL)
+target_link_libraries(starter-project src/glfw/src/Debug/glfw3)
 
+add_subdirectory(src/glfw)
 add_subdirectory(shaders)
 add_subdirectory(textures)
