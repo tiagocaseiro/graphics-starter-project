@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.21)
 
 file(GLOB TEXTURE_FILES_PATH
   ${CMAKE_CURRENT_SOURCE_DIR}/*.png
