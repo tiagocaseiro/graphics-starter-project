@@ -1,7 +1,5 @@
 #include "VertexBuffer.h"
 
-#include "OGLRenderData.h"
-
 void VertexBuffer::init()
 {
     glGenVertexArrays(1, &mVAO);
