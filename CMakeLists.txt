@@ -2,20 +2,18 @@ cmake_minimum_required(VERSION 3.21)
 
 project(starter-project LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(src)
 
-file(GLOB SOURCE_FILES_PATH src/opengl/*.cpp src/tools/*.cpp src/*.cpp src/imgui/*.cpp)
+file(GLOB SOURCE_FILES_PATH src/tinygltf/tiny_gltf.cc src/opengl/*.cpp src/tools/*.cpp src/model/*.cpp src/*.cpp src/imgui/*.cpp)
 
-add_executable(starter-project ${SOURCE_FILES_PATH})
+add_executable(starter-project ${SOURCE_FILES_PATH}) 
 
 set_target_properties(starter-project PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(starter-project PUBLIC src PUBLIC src/glm PUBLIC src/glfw/include)
-
-target_compile_features(starter-project PUBLIC cxx_std_20)
 
 find_package(OpenGL REQUIRED)
 
