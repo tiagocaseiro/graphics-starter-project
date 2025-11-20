@@ -49,6 +49,10 @@ void UserInterface::createFrame(const OGLRenderData& renderData)
     ImGui::SameLine();
     ImGui::Text(std::to_string(renderData.rdTriangleCount).c_str());
 
+    ImGui::Text("Gltf Triangles:");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(renderData.rdGltfTriangleCount).c_str());
+
     ImGui::Text("View Azimuth:");
     ImGui::SameLine();
     ImGui::Text("%s", std::to_string(renderData.rdViewAzimuth).c_str());

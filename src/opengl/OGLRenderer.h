@@ -11,6 +11,7 @@
 #include "tools/Timer.h"
 
 struct GLFWWindow;
+class GltfModel;
 
 class OGLRenderer
 {
@@ -26,8 +27,7 @@ public:
     void handleMovementKeys();
 
 private:
-    Shader mBasicShader;
-    Shader mChangedShader;
+    Shader mGltfShader;
     Framebuffer mFramebuffer;
     VertexBuffer mVertexBuffer;
     UniformBuffer m_UniformBuffer;
@@ -36,7 +36,8 @@ private:
     glm::mat4 mViewMatrix       = glm::mat4(1.0);
     glm::mat4 mProjectionMatrix = glm::mat4(1.0);
 
-    Shader* mActiveShader = &mBasicShader;
+    std::shared_ptr<GltfModel> mGltfModel;
+
     OGLRenderData mRenderData;
     UserInterface mUserInterface;
     Timer mUIGenerateTimer;

@@ -20,5 +20,6 @@ find_package(OpenGL REQUIRED)
 target_link_libraries(starter-project OpenGL::GL)
 target_link_libraries(starter-project src/glfw/src/Debug/glfw3)
 
+add_subdirectory(assets)
 add_subdirectory(shaders)
 add_subdirectory(textures)

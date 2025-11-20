@@ -2,7 +2,7 @@
 
 #include <stb_image.h>
 
-bool Texture::loadTexture(const std::string& textureFilename)
+bool Texture::loadTexture(const std::string& textureFilename, const bool flipImage)
 {
     int mTexWidth       = 0;
     int mTexHeight      = 0;
@@ -10,7 +10,7 @@ bool Texture::loadTexture(const std::string& textureFilename)
 
     GLenum constexpr fmt[] = {GL_RED, GL_RG, GL_RGB, GL_RGBA};
 
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(flipImage);
 
     unsigned char* textureData = stbi_load(textureFilename.c_str(), &mTexWidth, &mTexHeight, &mNumberChannels, 0);
 

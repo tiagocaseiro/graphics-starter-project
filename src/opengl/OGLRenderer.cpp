@@ -11,6 +11,8 @@
 
 #include "Logger.h"
 
+#include "model/GltfModel.h"
+
 bool OGLRenderer::init(const int width, const int height, GLFWwindow* window)
 {
     if(gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == false)
@@ -36,22 +38,25 @@ bool OGLRenderer::init(const int width, const int height, GLFWwindow* window)
 
     m_UniformBuffer.init();
 
-    if(mTex.loadTexture("../textures/crate.png") == false)
-    {
-        return false;
-    }
-
-    if(mBasicShader.loadShaders("../shaders/basic.vert", "../shaders/basic.frag") == false)
-    {
-        return false;
-    }
-
-    if(mChangedShader.loadShaders("../shaders/changed.vert", "../shaders/changed.frag") == false)
+    if(mGltfShader.loadShaders("../shaders/gltf.vert", "../shaders/gltf.frag") == false)
     {
         return false;
     }
 
     mUserInterface.init(mRenderData);
+
+    mGltfModel = std::make_shared<GltfModel>();
+
+    const auto modelFileName    = "../assets/Woman.gltf";
+    const auto modelTexFilename = "../textures/Woman.png";
+
+    if(mGltfModel->loadModel(mRenderData, modelFileName, modelTexFilename) == false)
+    {
+        return false;
+    }
+
+    mGltfModel->uploadIndexBuffer();
+
     return true;
 }
 
@@ -67,8 +72,9 @@ void OGLRenderer::setSize(const int width, const int height)
 void OGLRenderer::cleanup()
 {
     mUserInterface.cleanup();
-    mBasicShader.cleanup();
-    mChangedShader.cleanup();
+    mGltfModel->cleanup();
+    mGltfModel.reset();
+    mGltfShader.cleanup();
     mFramebuffer.cleanup();
     mVertexBuffer.cleanup();
     m_UniformBuffer.cleanup();
@@ -104,23 +110,14 @@ void OGLRenderer::draw()
 
     glm::mat4 model = glm::mat4(1.0);
 
-    if(mActiveShader)
-    {
-        mActiveShader->use();
-    }
-
-    if(mActiveShader == &mBasicShader)
-    {
-        model = glm::rotate(glm::mat4(1.0), t, glm::vec3(0.0, 0.0, 1.0));
-    }
-    else
-    {
-        model = glm::rotate(glm::mat4(1.0), -t, glm::vec3(0.0, 0.0, 1.0));
-    }
+    mGltfShader.use();
 
     mViewMatrix = mCamera.getViewMatrix(mRenderData) * model;
 
     m_UniformBuffer.uploadUboData(mViewMatrix, mProjectionMatrix);
+
+    mGltfModel->draw();
+
     mTex.bind();
     mVertexBuffer.bind();
     mVertexBuffer.draw(GL_TRIANGLES, 0, mRenderData.rdTriangleCount);
@@ -132,6 +129,7 @@ void OGLRenderer::draw()
 
     mUIGenerateTimer.start();
     handleMovementKeys();
+    mGltfModel->uploadVertexBuffers();
     mUserInterface.createFrame(mRenderData);
     mRenderData.rdUIGenerateTime = mUIGenerateTimer.stop();
     mUserInterface.render();
@@ -141,17 +139,6 @@ void OGLRenderer::draw()
 
 void OGLRenderer::handleKeyEvents(const int key, const int scancode, const int action, const int mods)
 {
-    if(key == GLFW_KEY_SPACE && action == GLFW_RELEASE)
-    {
-        if(mActiveShader == &mBasicShader)
-        {
-            mActiveShader = &mChangedShader;
-        }
-        else
-        {
-            mActiveShader = &mBasicShader;
-        }
-    }
 }
 
 void OGLRenderer::handleMouseButtonEvents(const int button, const int action, const int mods)
