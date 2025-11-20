@@ -57,6 +57,9 @@ bool OGLRenderer::init(const int width, const int height, GLFWwindow* window)
 
     mGltfModel->uploadIndexBuffer();
 
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+
     return true;
 }
 
@@ -118,11 +121,11 @@ void OGLRenderer::draw()
 
     mGltfModel->draw();
 
-    mTex.bind();
-    mVertexBuffer.bind();
-    mVertexBuffer.draw(GL_TRIANGLES, 0, mRenderData.rdTriangleCount);
-    mVertexBuffer.unbind();
-    mTex.bind();
+    // mTex.bind();
+    // mVertexBuffer.bind();
+    // mVertexBuffer.draw(GL_TRIANGLES, 0, mRenderData.rdTriangleCount);
+    // mVertexBuffer.unbind();
+    // mTex.unbind();
     mFramebuffer.bind();
 
     mFramebuffer.drawToScreen();
