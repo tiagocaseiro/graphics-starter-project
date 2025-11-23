@@ -2,12 +2,18 @@
 
 #include <memory>
 #include <string>
-
-#include <tinygltf/tiny_gltf.h>
+#include <vector>
 
 #include "opengl/Texture.h"
 
 class OGLRenderData;
+class GltfNode;
+
+namespace tinygltf
+{
+    class Model;
+}
+
 class GltfModel
 {
 public:
@@ -20,9 +26,11 @@ public:
 private:
     void createVertexBuffers();
     void createIndexBuffer();
+
     int getTriangleCount() const;
 
     std::shared_ptr<tinygltf::Model> mModel;
+    std::shared_ptr<GltfNode> mRootNode;
     GLuint mVAO = 0;
     std::vector<GLuint> mVertexVBO;
     GLuint mIndexVBO = 0;

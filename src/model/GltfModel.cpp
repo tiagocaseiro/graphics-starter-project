@@ -2,7 +2,11 @@
 
 #include <algorithm>
 
+#include <tinygltf/tiny_gltf.h>
+
+#include "GltfNode.h"
 #include "Logger.h"
+
 #include "opengl/OGLRenderData.h"
 
 static const std::string_view ATTRIBUTES[] = {"POSITION", "NORMAL", "TEXCOORD_0"};
@@ -52,6 +56,11 @@ bool GltfModel::loadModel(OGLRenderData& renderData, const std::string& modelFil
 
     renderData.rdGltfTriangleCount = getTriangleCount();
 
+    int rootNode = mModel->scenes[0].nodes.at(0);
+
+    mRootNode = GltfNode::createRoot(rootNode, mModel);
+
+    std::cout << *mRootNode << std::endl;
     return true;
 }
 
