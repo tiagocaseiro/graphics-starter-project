@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "opengl/Texture.h"
 
 class OGLRenderData;
@@ -31,8 +33,14 @@ private:
 
     std::shared_ptr<tinygltf::Model> mModel;
     std::shared_ptr<GltfNode> mRootNode;
-    GLuint mVAO = 0;
+
+    std::vector<glm::u16vec4> mJoints;
+    std::vector<glm::vec4> mWeights;
+
     std::vector<GLuint> mVertexVBO;
+
+    GLuint mVAO      = 0;
     GLuint mIndexVBO = 0;
+
     Texture mTex;
 };

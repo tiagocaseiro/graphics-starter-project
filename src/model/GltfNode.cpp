@@ -16,10 +16,10 @@ std::shared_ptr<GltfNode> GltfNode::createRoot(const int nodeNum, const std::sha
     {
         return nullptr;
     }
-    return std::shared_ptr<GltfNode>(new GltfNode(nodeNum, *model));
+    return std::shared_ptr<GltfNode>(new GltfNode(nullptr, nodeNum, *model));
 }
 
-GltfNode::GltfNode(const int nodeNum, const tinygltf::Model& model) : mNodeNum(nodeNum)
+GltfNode::GltfNode(const GltfNode* const parent, const int nodeNum, const tinygltf::Model& model) : mNodeNum(nodeNum)
 {
     const tinygltf::Node& node = model.nodes[nodeNum];
 
@@ -39,13 +39,17 @@ GltfNode::GltfNode(const int nodeNum, const tinygltf::Model& model) : mNodeNum(n
         mTranslation = glm::vec3(node.translation[0], node.translation[1], node.translation[2]);
     }
 
+    calculateLocalTRSMatrix();
+
+    glm::mat4 parentNodeMatrix = parent ? parent->mNodeMatrix : glm::mat4(1.0f);
+
+    mNodeMatrix = parentNodeMatrix * mLocalTRSMatrix;
+
     mChildNodes.reserve(node.children.size());
     for(const int childNodeNum : node.children)
     {
-        mChildNodes.push_back(std::shared_ptr<GltfNode>(new GltfNode(childNodeNum, model)));
+        mChildNodes.push_back(std::shared_ptr<GltfNode>(new GltfNode(this, childNodeNum, model)));
     }
-
-    calculateLocalTRSMatrix();
 }
 
 void GltfNode::calculateLocalTRSMatrix()

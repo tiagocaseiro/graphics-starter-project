@@ -21,7 +21,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const GltfNode& node);
 
 private:
-    GltfNode(const int nodeNum, const tinygltf::Model& model);
+    GltfNode(const GltfNode* const parent, const int nodeNum, const tinygltf::Model& model);
     void calculateLocalTRSMatrix();
     void printNode(std::ostream& os, int depth) const;
 
@@ -31,12 +31,11 @@ private:
 
     std::string mNodeName;
 
-    glm::vec3 mScale             = glm::vec3(1.0f);
-    glm::vec3 mTranslation       = glm::vec3(0.0f);
-    glm::quat mRotation          = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-    glm::mat4 mLocalTRSMatrix    = glm::mat4(1.0f);
-    glm::mat4 mNodeMatrix        = glm::mat4(1.0f);
-    glm::mat4 mInverseBindMatrix = glm::mat4(1.0f);
+    glm::vec3 mScale          = glm::vec3(1.0f);
+    glm::vec3 mTranslation    = glm::vec3(0.0f);
+    glm::quat mRotation       = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+    glm::mat4 mLocalTRSMatrix = glm::mat4(1.0f);
+    glm::mat4 mNodeMatrix     = glm::mat4(1.0f);
 };
 
 std::ostream& operator<<(std::ostream& os, const GltfNode& node);
