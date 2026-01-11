@@ -17,11 +17,16 @@ namespace tinygltf
 class GltfNode
 {
 public:
-    static std::shared_ptr<GltfNode> createRoot(const int nodeNum, const std::shared_ptr<tinygltf::Model>& model);
+    static std::shared_ptr<GltfNode> createRoot(const int nodeNum, const tinygltf::Model& model,
+                                                const std::vector<int>& nodeToJoint,
+                                                const std::vector<glm::mat4>& inverseBindMatrices,
+                                                std::vector<glm::mat4>& mJointMatrices);
     friend std::ostream& operator<<(std::ostream& os, const GltfNode& node);
 
 private:
-    GltfNode(const GltfNode* const parent, const int nodeNum, const tinygltf::Model& model);
+    GltfNode(const GltfNode* const parent, const int nodeNum, const tinygltf::Model& model,
+             const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
+             std::vector<glm::mat4>& jointMatrices);
     void calculateLocalTRSMatrix();
     void printNode(std::ostream& os, int depth) const;
 

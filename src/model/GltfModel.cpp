@@ -9,9 +9,23 @@
 
 #include "opengl/OGLRenderData.h"
 
-static const std::string_view ATTRIBUTES[] = {"POSITION", "NORMAL", "TEXCOORD_0"};
+static const std::string_view ATTRIBUTES[] = {"POSITION", "NORMAL", "TEXCOORD_0", "JOINTS_0", "WEIGHTS_0"};
 
-int getAttributeIndex(const std::string& attribute)
+static void initializeFromBuffer(const tinygltf::Model& model, const int accessorIndex, auto& destination)
+{
+    const tinygltf::Accessor& accessor     = model.accessors[accessorIndex];
+    const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+    const tinygltf::Buffer& buffer         = model.buffers[bufferView.buffer];
+
+    // if(destination.empty())
+    // {
+    destination.resize(accessor.count);
+    // }
+
+    memcpy(destination.data(), buffer.data.data() + bufferView.byteOffset, bufferView.byteLength);
+}
+
+int getAttributeIndex(std::string_view attribute)
 {
     return std::distance(std::begin(ATTRIBUTES), std::ranges::find(ATTRIBUTES, attribute));
 }
@@ -56,11 +70,38 @@ bool GltfModel::loadModel(OGLRenderData& renderData, const std::string& modelFil
 
     renderData.rdGltfTriangleCount = getTriangleCount();
 
-    int rootNode = mModel->scenes[0].nodes.at(0);
+    const std::vector<int>& nodes = mModel->scenes[0].nodes;
+    const tinygltf::Skin& skin    = mModel->skins[0];
 
-    mRootNode = GltfNode::createRoot(rootNode, mModel);
+    // mInverseBindMatrices.resize(skin.joints.size());
+
+    int inverseBindMatricesIndex = skin.inverseBindMatrices;
+    if(inverseBindMatricesIndex != -1)
+    {
+        initializeFromBuffer(*mModel, inverseBindMatricesIndex, mInverseBindMatrices);
+    }
+
+    mJointMatrices.resize(mInverseBindMatrices.size());
+
+    int rootNode = nodes.at(0);
+
+    mNodeToJoint.resize(mModel->nodes.size());
+
+    const std::vector<int>& joints = skin.joints;
+    for(int i = 0; i != joints.size(); i++)
+    {
+        const int nodeIndex     = joints[i];
+        mNodeToJoint[nodeIndex] = i;
+    }
+
+    mRootNode = GltfNode::createRoot(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices);
+
+    initializeFromBuffer(*mModel, getAttributeIndex("JOINTS_0"), mJoints);
+
+    initializeFromBuffer(*mModel, getAttributeIndex("WEIGHTS_0"), mWeights);
 
     std::cout << *mRootNode << std::endl;
+
     return true;
 }
 
@@ -99,7 +140,8 @@ void GltfModel::cleanup()
 
 void GltfModel::uploadVertexBuffers()
 {
-    for(int i = 0; i < std::size(ATTRIBUTES); i++)
+    // for(int i = 0; i < std::size(ATTRIBUTES); i++)
+    for(int i = 0; i < 3; i++)
     {
         const tinygltf::Accessor& accessor     = mModel->accessors[i];
         const tinygltf::BufferView& bufferView = mModel->bufferViews[accessor.bufferView];

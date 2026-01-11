@@ -10,16 +10,24 @@ void printWhitespace(std::ostream& os, const int width)
     }
 }
 
-std::shared_ptr<GltfNode> GltfNode::createRoot(const int nodeNum, const std::shared_ptr<tinygltf::Model>& model)
+std::shared_ptr<GltfNode> GltfNode::createRoot(const int nodeNum, const tinygltf::Model& model,
+                                               const std::vector<int>& nodeToJoint,
+                                               const std::vector<glm::mat4>& inverseBindMatrices,
+                                               std::vector<glm::mat4>& jointMatrices)
 {
-    if(model == nullptr || nodeNum == -1)
+    if(nodeNum == -1)
     {
         return nullptr;
     }
-    return std::shared_ptr<GltfNode>(new GltfNode(nullptr, nodeNum, *model));
+
+    return std::shared_ptr<GltfNode>(
+        new GltfNode(nullptr, nodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices));
 }
 
-GltfNode::GltfNode(const GltfNode* const parent, const int nodeNum, const tinygltf::Model& model) : mNodeNum(nodeNum)
+GltfNode::GltfNode(const GltfNode* const parent, const int nodeNum, const tinygltf::Model& model,
+                   const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
+                   std::vector<glm::mat4>& jointMatrices)
+    : mNodeNum(nodeNum)
 {
     const tinygltf::Node& node = model.nodes[nodeNum];
 
@@ -45,10 +53,14 @@ GltfNode::GltfNode(const GltfNode* const parent, const int nodeNum, const tinygl
 
     mNodeMatrix = parentNodeMatrix * mLocalTRSMatrix;
 
+    const int jointIndex = nodeToJoint[mNodeNum];
+
+    jointMatrices[jointIndex] = mNodeMatrix * inverseBindMatrices[jointIndex];
     mChildNodes.reserve(node.children.size());
     for(const int childNodeNum : node.children)
     {
-        mChildNodes.push_back(std::shared_ptr<GltfNode>(new GltfNode(this, childNodeNum, model)));
+        mChildNodes.push_back(std::shared_ptr<GltfNode>(
+            new GltfNode(this, childNodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices)));
     }
 }
 
