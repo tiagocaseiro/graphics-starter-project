@@ -42,6 +42,8 @@ private:
     std::vector<glm::mat4> mInverseBindMatrices;
     std::vector<glm::mat4> mJointMatrices;
 
+    std::vector<glm::vec3> mAlteredPositions;
+
     std::vector<GLuint> mVertexVBO;
 
     GLuint mVAO      = 0;

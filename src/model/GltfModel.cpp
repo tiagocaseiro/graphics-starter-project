@@ -172,14 +172,17 @@ void GltfModel::createVertexBuffers()
 
     for(const auto& [attribType, accessorNum] : primitives.attributes)
     {
-        const tinygltf::Accessor& accessor     = mModel->accessors[accessorNum];
-        const tinygltf::BufferView& bufferView = mModel->bufferViews[accessor.bufferView];
-        const tinygltf::Buffer& buffer         = mModel->buffers[bufferView.buffer];
-
         if(std::ranges::contains(ATTRIBUTES, attribType) == false)
         {
             continue;
         }
+
+        if(attribType == "POSITION")
+        {
+            initializeFromBuffer(*mModel, accessorNum, mAlteredPositions);
+        }
+
+        const tinygltf::Accessor& accessor = mModel->accessors[accessorNum];
 
         int dataSize = 1;
         switch(accessor.type)
