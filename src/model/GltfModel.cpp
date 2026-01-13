@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include <glm/glm/gtc/type_ptr.hpp>
+
 #include <tinygltf/tiny_gltf.h>
 
 #include "GltfNode.h"
@@ -17,11 +19,7 @@ static void initializeFromBuffer(const tinygltf::Model& model, const int accesso
     const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
     const tinygltf::Buffer& buffer         = model.buffers[bufferView.buffer];
 
-    // if(destination.empty())
-    // {
     destination.resize(accessor.count);
-    // }
-
     memcpy(destination.data(), buffer.data.data() + bufferView.byteOffset, bufferView.byteLength);
 }
 
@@ -73,15 +71,11 @@ bool GltfModel::loadModel(OGLRenderData& renderData, const std::string& modelFil
     const std::vector<int>& nodes = mModel->scenes[0].nodes;
     const tinygltf::Skin& skin    = mModel->skins[0];
 
-    // mInverseBindMatrices.resize(skin.joints.size());
-
     int inverseBindMatricesIndex = skin.inverseBindMatrices;
     if(inverseBindMatricesIndex != -1)
     {
         initializeFromBuffer(*mModel, inverseBindMatricesIndex, mInverseBindMatrices);
     }
-
-    mJointMatrices.resize(mInverseBindMatrices.size());
 
     int rootNode = nodes.at(0);
 
@@ -94,13 +88,27 @@ bool GltfModel::loadModel(OGLRenderData& renderData, const std::string& modelFil
         mNodeToJoint[nodeIndex] = i;
     }
 
-    mRootNode = GltfNode::createRoot(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices);
+    mJointMatrices.resize(mInverseBindMatrices.size());
+
+    mRootNode = GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices);
 
     initializeFromBuffer(*mModel, getAttributeIndex("JOINTS_0"), mJoints);
 
     initializeFromBuffer(*mModel, getAttributeIndex("WEIGHTS_0"), mWeights);
 
     std::cout << *mRootNode << std::endl;
+
+    for(int i = 0; i != mJoints.size(); i++)
+    {
+        glm::ivec4 jointIndex = glm::make_vec4(mJoints[i]);
+        glm::vec4 weightIndex = mWeights[i];
+
+        glm::mat4 skinMat = weightIndex.x * mJointMatrices[jointIndex.x] +
+                            weightIndex.y * mJointMatrices[jointIndex.y] +
+                            weightIndex.z * mJointMatrices[jointIndex.z] + weightIndex.w * mJointMatrices[jointIndex.w];
+
+        mAlteredPositions[i] = skinMat * glm::vec4(mAlteredPositions[i], 1.0f);
+    }
 
     return true;
 }
@@ -143,12 +151,22 @@ void GltfModel::uploadVertexBuffers()
     // for(int i = 0; i < std::size(ATTRIBUTES); i++)
     for(int i = 0; i < 3; i++)
     {
-        const tinygltf::Accessor& accessor     = mModel->accessors[i];
-        const tinygltf::BufferView& bufferView = mModel->bufferViews[accessor.bufferView];
-        const tinygltf::Buffer& buffer         = mModel->buffers[bufferView.buffer];
 
         glBindBuffer(GL_ARRAY_BUFFER, mVertexVBO[i]);
-        glBufferData(GL_ARRAY_BUFFER, bufferView.byteLength, &buffer.data[0] + bufferView.byteOffset, GL_STATIC_DRAW);
+        if(getAttributeIndex("POSITION") == i)
+        {
+            glBufferData(GL_ARRAY_BUFFER, mAlteredPositions.size() * sizeof(glm::vec3), mAlteredPositions.data(),
+                         GL_STATIC_DRAW);
+        }
+        else
+        {
+            const tinygltf::Accessor& accessor     = mModel->accessors[i];
+            const tinygltf::BufferView& bufferView = mModel->bufferViews[accessor.bufferView];
+            const tinygltf::Buffer& buffer         = mModel->buffers[bufferView.buffer];
+
+            glBufferData(GL_ARRAY_BUFFER, bufferView.byteLength, &buffer.data[0] + bufferView.byteOffset,
+                         GL_STATIC_DRAW);
+        }
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 }
