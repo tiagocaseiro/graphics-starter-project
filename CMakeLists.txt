@@ -20,6 +20,20 @@ find_package(OpenGL REQUIRED)
 target_link_libraries(starter-project OpenGL::GL)
 target_link_libraries(starter-project src/glfw/src/Debug/glfw3)
 
-add_subdirectory(assets)
-add_subdirectory(shaders)
-add_subdirectory(textures)
+add_custom_command(
+        TARGET starter-project POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/assets
+                ${CMAKE_CURRENT_BINARY_DIR}/assets)
+
+add_custom_command(
+        TARGET starter-project POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/shaders
+                ${CMAKE_CURRENT_BINARY_DIR}/shaders)
+  
+add_custom_command(
+        TARGET starter-project POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/textures
+                ${CMAKE_CURRENT_BINARY_DIR}/textures)
