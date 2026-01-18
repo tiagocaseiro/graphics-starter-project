@@ -9,15 +9,17 @@
 class UniformBuffer
 {
 public:
-    static std::shared_ptr<UniformBuffer> make(int bufferSize);
+    static std::shared_ptr<UniformBuffer> make(int bindingPoint, int bufferSize);
 
     ~UniformBuffer();
     void uploadUboData(const std::vector<glm::mat4>& matrices);
     void uploadUboData(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 
 private:
-    UniformBuffer(int bufferSize);
+    UniformBuffer(int bindingPoint, int bufferSize);
 
     const int mBufferSize;
+    const int mBindingPoint;
+
     GLuint mUboBuffer = 0;
 };

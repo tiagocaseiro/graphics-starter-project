@@ -15,10 +15,7 @@ layout(std140, binding = 0) uniform Matrices
     mat4 projection;
 };
 
-layout(std140, binding = 1) uniform JointMatrices
-{
-    mat4 jointMat[42];
-};
+layout(std140, binding = 1) uniform JointMatrices { mat4 jointMat[42]; };
 
 void main()
 {

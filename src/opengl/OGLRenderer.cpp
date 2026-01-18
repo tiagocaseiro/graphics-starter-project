@@ -32,7 +32,7 @@ std::shared_ptr<OGLRenderer> OGLRenderer::make(const int width, const int height
     renderData.rdHeight = height;
     renderData.rdWindow = window;
 
-    std::shared_ptr<Shader> gltfShader = Shader::make("../shaders/gltf.vert", "../shaders/gltf.frag");
+    std::shared_ptr<Shader> gltfShader = Shader::make("../shaders/gltf_gpu.vert", "../shaders/gltf_gpu.frag");
     if(gltfShader == nullptr)
     {
         return nullptr;
@@ -62,8 +62,8 @@ OGLRenderer::OGLRenderer(const std::shared_ptr<Shader>& gltfShader, const Frameb
       mFramebuffer(framebuffer),
       mGltfModel(gltfModel),
       mRenderData(renderData),
-      mUniformBuffer(UniformBuffer::make(2 * sizeof(glm::mat4))),
-      mUniformBufferJointMatrices(UniformBuffer::make(gltfModel->getJointMatrices().size() * sizeof(glm::mat4))),
+      mUniformBuffer(UniformBuffer::make(0, 2 * sizeof(glm::mat4))),
+      mUniformBufferJointMatrices(UniformBuffer::make(1, gltfModel->getJointMatrices().size() * sizeof(glm::mat4))),
       mUserInterface(renderData)
 {
 }
