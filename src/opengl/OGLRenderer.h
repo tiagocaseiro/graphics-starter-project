@@ -16,9 +16,11 @@ class GltfModel;
 class OGLRenderer
 {
 public:
-    bool init(const int width, const int height, GLFWwindow* window);
+    static std::shared_ptr<OGLRenderer> make(const int width, const int height, GLFWwindow* window);
+
+    ~OGLRenderer();
+
     void setSize(const int width, const int height);
-    void cleanup();
     void uploadData(const OGLMesh& vertexData);
     void draw();
     void handleKeyEvents(const int key, const int scancode, const int action, const int mods);
@@ -27,10 +29,14 @@ public:
     void handleMovementKeys();
 
 private:
+    OGLRenderer(const Shader& mGltfShader, const Framebuffer& mFramebuffer, const std::shared_ptr<GltfModel>& gltfModel,
+                const OGLRenderData& mRenderData);
+
     Shader mGltfShader;
     Framebuffer mFramebuffer;
     VertexBuffer mVertexBuffer;
-    UniformBuffer m_UniformBuffer;
+    std::shared_ptr<UniformBuffer> m_UniformBuffer;
+    std::shared_ptr<UniformBuffer> m_UniformBufferJointMatrices;
     Texture mTex;
 
     glm::mat4 mViewMatrix       = glm::mat4(1.0);

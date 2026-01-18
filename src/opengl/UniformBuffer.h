@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <glm/glm.hpp>
 
 #include <glad/glad.h>
@@ -7,10 +9,14 @@
 class UniformBuffer
 {
 public:
-    void init();
+    static std::shared_ptr<UniformBuffer> make();
+
+    ~UniformBuffer();
+    void uploadUboData(const std::vector<glm::mat4>& matrices);
     void uploadUboData(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
-    void cleanup();
 
 private:
+    UniformBuffer();
+
     GLuint mUboBuffer = 0;
 };

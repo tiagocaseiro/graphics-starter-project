@@ -36,8 +36,9 @@ bool Window::init(const int width, const int height, const std::string& title)
         thisWindow->handleWindowCloseEvents();
     });
 
-    mRenderer = std::make_unique<OGLRenderer>();
-    if(mRenderer->init(width, height, mWindow) == false)
+    mRenderer = OGLRenderer::make(width, height, mWindow);
+
+    if(mRenderer == nullptr)
     {
         Logger::log(1, "%s: Failed to initialize renderer\n", __FUNCTION__);
         glfwTerminate();
@@ -96,10 +97,7 @@ void Window::cleanup()
     glfwTerminate();
 }
 
-void Window::handleWindowCloseEvents()
-{
-    Logger::log(1, "%s: Window got a close event\n", __FUNCTION__);
-}
+void Window::handleWindowCloseEvents() { Logger::log(1, "%s: Window got a close event\n", __FUNCTION__); }
 
 void Window::handleKeyEvents(const int key, const int scancode, const int action, const int mods)
 {

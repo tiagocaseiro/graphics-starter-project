@@ -2,13 +2,17 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-void UniformBuffer::init()
+UniformBuffer::UniformBuffer()
 {
     glGenBuffers(1, &mUboBuffer);
     glBindBuffer(GL_UNIFORM_BUFFER, mUboBuffer);
     glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
+
+UniformBuffer::~UniformBuffer() { glDeleteBuffers(1, &mUboBuffer); }
+
+void UniformBuffer::uploadUboData(const std::vector<glm::mat4>& matrices) {}
 
 void UniformBuffer::uploadUboData(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 {
@@ -19,7 +23,4 @@ void UniformBuffer::uploadUboData(glm::mat4 viewMatrix, glm::mat4 projectionMatr
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void UniformBuffer::cleanup()
-{
-    glDeleteBuffers(1, &mUboBuffer);
-}
+std::shared_ptr<UniformBuffer> UniformBuffer::make() { return std::shared_ptr<UniformBuffer>(new UniformBuffer); }

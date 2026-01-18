@@ -13,54 +13,61 @@
 
 #include "model/GltfModel.h"
 
-bool OGLRenderer::init(const int width, const int height, GLFWwindow* window)
+std::shared_ptr<OGLRenderer> OGLRenderer::make(const int width, const int height, GLFWwindow* window)
 {
-    if(gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == false)
+    if(gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == false || GLAD_GL_VERSION_4_6 == false)
     {
-        return false;
+        return nullptr;
     }
 
-    if(GLAD_GL_VERSION_4_6 == false)
+    Framebuffer framebuffer;
+
+    if(framebuffer.init(width, height) == false)
     {
-        return false;
+        return nullptr;
     }
 
-    if(mFramebuffer.init(width, height) == false)
+    OGLRenderData renderData;
+
+    renderData.rdWidth  = width;
+    renderData.rdHeight = height;
+    renderData.rdWindow = window;
+
+    Shader gltfShader;
+
+    if(gltfShader.loadShaders("../shaders/gltf.vert", "../shaders/gltf.frag") == false)
     {
-        return false;
+        return nullptr;
     }
 
-    mRenderData.rdWidth  = width;
-    mRenderData.rdHeight = height;
-    mRenderData.rdWindow = window;
-
-    mVertexBuffer.init();
-
-    m_UniformBuffer.init();
-
-    if(mGltfShader.loadShaders("../shaders/gltf.vert", "../shaders/gltf.frag") == false)
-    {
-        return false;
-    }
-
-    mUserInterface.init(mRenderData);
-
-    mGltfModel = std::make_shared<GltfModel>();
+    std::shared_ptr<GltfModel> gltfModel = std::make_shared<GltfModel>();
 
     const auto modelFileName    = "../assets/Woman.gltf";
     const auto modelTexFilename = "../textures/Woman.png";
 
-    if(mGltfModel->loadModel(mRenderData, modelFileName, modelTexFilename) == false)
+    if(gltfModel->loadModel(renderData, modelFileName, modelTexFilename) == false)
     {
-        return false;
+        return nullptr;
     }
 
-    mGltfModel->uploadIndexBuffer();
+    gltfModel->uploadIndexBuffer();
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
 
-    return true;
+    return std::shared_ptr<OGLRenderer>(new OGLRenderer(gltfShader, framebuffer, gltfModel, renderData));
+}
+
+OGLRenderer::OGLRenderer(const Shader& gltfShader, const Framebuffer& framebuffer,
+                         const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& renderData)
+    : mGltfShader(gltfShader),
+      mFramebuffer(framebuffer),
+      mGltfModel(gltfModel),
+      mRenderData(renderData),
+      m_UniformBuffer(UniformBuffer::make())
+{
+    mVertexBuffer.init();
+    mUserInterface.init(mRenderData);
 }
 
 void OGLRenderer::setSize(const int width, const int height)
@@ -72,7 +79,7 @@ void OGLRenderer::setSize(const int width, const int height)
     glViewport(0, 0, width, height);
 }
 
-void OGLRenderer::cleanup()
+OGLRenderer::~OGLRenderer()
 {
     mUserInterface.cleanup();
     mGltfModel->cleanup();
@@ -80,7 +87,6 @@ void OGLRenderer::cleanup()
     mGltfShader.cleanup();
     mFramebuffer.cleanup();
     mVertexBuffer.cleanup();
-    m_UniformBuffer.cleanup();
     mTex.cleanup();
 }
 
@@ -117,15 +123,18 @@ void OGLRenderer::draw()
 
     mViewMatrix = mCamera.getViewMatrix(mRenderData) * model;
 
-    m_UniformBuffer.uploadUboData(mViewMatrix, mProjectionMatrix);
+    if(m_UniformBuffer)
+    {
+        m_UniformBuffer->uploadUboData(mViewMatrix, mProjectionMatrix);
+    }
+
+    // if(m_UniformBufferJointMatrices)
+    // {
+    //     m_UniformBufferJointMatrices->uploadUboData(mGltfModel->getJointMatrices());
+    // }
 
     mGltfModel->draw();
 
-    // mTex.bind();
-    // mVertexBuffer.bind();
-    // mVertexBuffer.draw(GL_TRIANGLES, 0, mRenderData.rdTriangleCount);
-    // mVertexBuffer.unbind();
-    // mTex.unbind();
     mFramebuffer.bind();
 
     mFramebuffer.drawToScreen();
@@ -140,9 +149,7 @@ void OGLRenderer::draw()
     mLastTickTime = glfwGetTime();
 }
 
-void OGLRenderer::handleKeyEvents(const int key, const int scancode, const int action, const int mods)
-{
-}
+void OGLRenderer::handleKeyEvents(const int key, const int scancode, const int action, const int mods) {}
 
 void OGLRenderer::handleMouseButtonEvents(const int button, const int action, const int mods)
 {
