@@ -11,6 +11,9 @@
 
 #include "Logger.h"
 
+#include "Shader.h"
+#include "ShaderStorageBuffer.h"
+#include "UniformBuffer.h"
 #include "model/GltfModel.h"
 
 std::shared_ptr<OGLRenderer> OGLRenderer::make(const int width, const int height, GLFWwindow* window)
@@ -63,7 +66,8 @@ OGLRenderer::OGLRenderer(const std::shared_ptr<Shader>& gltfShader, const Frameb
       mGltfModel(gltfModel),
       mRenderData(renderData),
       mUniformBuffer(UniformBuffer::make(0, 2 * sizeof(glm::mat4))),
-      mUniformBufferJointMatrices(UniformBuffer::make(1, gltfModel->getJointMatrices().size() * sizeof(glm::mat4))),
+      mShaderStorageBufferJointMatrices(
+          ShaderStorageBuffer::make(1, gltfModel->getJointMatrices().size() * sizeof(glm::mat4))),
       mUserInterface(renderData)
 {
 }
@@ -114,12 +118,12 @@ void OGLRenderer::draw()
 
     if(mUniformBuffer)
     {
-        mUniformBuffer->uploadUboData(mViewMatrix, mProjectionMatrix);
+        mUniformBuffer->uploadData(mViewMatrix, mProjectionMatrix);
     }
 
-    if(mUniformBufferJointMatrices)
+    if(mShaderStorageBufferJointMatrices)
     {
-        mUniformBufferJointMatrices->uploadUboData(mGltfModel->getJointMatrices());
+        mShaderStorageBufferJointMatrices->uploadData(mGltfModel->getJointMatrices());
     }
 
     mGltfModel->draw();

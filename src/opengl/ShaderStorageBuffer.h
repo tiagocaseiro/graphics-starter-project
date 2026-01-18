@@ -6,17 +6,17 @@
 
 #include <glad/glad.h>
 
-class UniformBuffer
+class ShaderStorageBuffer
 {
 public:
-    static std::shared_ptr<UniformBuffer> make(int bindingPoint, int bufferSize);
+    static std::shared_ptr<ShaderStorageBuffer> make(int bindingPoint, int bufferSize);
 
-    ~UniformBuffer();
+    ~ShaderStorageBuffer();
     void uploadData(const std::vector<glm::mat4>& matrices);
     void uploadData(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 
 private:
-    UniformBuffer(int bindingPoint, int bufferSize);
+    ShaderStorageBuffer(int bindingPoint, int bufferSize);
 
     const int mBufferSize;
     const int mBindingPoint;
