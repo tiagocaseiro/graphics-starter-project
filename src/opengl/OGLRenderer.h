@@ -37,12 +37,10 @@ private:
     VertexBuffer mVertexBuffer;
     std::shared_ptr<UniformBuffer> m_UniformBuffer;
     std::shared_ptr<UniformBuffer> m_UniformBufferJointMatrices;
-    Texture mTex;
+    std::shared_ptr<GltfModel> mGltfModel;
 
     glm::mat4 mViewMatrix       = glm::mat4(1.0);
     glm::mat4 mProjectionMatrix = glm::mat4(1.0);
-
-    std::shared_ptr<GltfModel> mGltfModel;
 
     OGLRenderData mRenderData;
     UserInterface mUserInterface;

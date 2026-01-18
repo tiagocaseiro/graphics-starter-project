@@ -40,12 +40,12 @@ std::shared_ptr<OGLRenderer> OGLRenderer::make(const int width, const int height
         return nullptr;
     }
 
-    std::shared_ptr<GltfModel> gltfModel = std::make_shared<GltfModel>();
+    static constexpr auto modelFileName    = "../assets/Woman.gltf";
+    static constexpr auto modelTexFilename = "../textures/Woman.png";
 
-    const auto modelFileName    = "../assets/Woman.gltf";
-    const auto modelTexFilename = "../textures/Woman.png";
+    std::shared_ptr<GltfModel> gltfModel = GltfModel::make(renderData, modelFileName, modelTexFilename);
 
-    if(gltfModel->loadModel(renderData, modelFileName, modelTexFilename) == false)
+    if(gltfModel == nullptr)
     {
         return nullptr;
     }
@@ -82,12 +82,10 @@ void OGLRenderer::setSize(const int width, const int height)
 OGLRenderer::~OGLRenderer()
 {
     mUserInterface.cleanup();
-    mGltfModel->cleanup();
     mGltfModel.reset();
     mGltfShader.cleanup();
     mFramebuffer.cleanup();
     mVertexBuffer.cleanup();
-    mTex.cleanup();
 }
 
 void OGLRenderer::uploadData(const OGLMesh& vertexData)

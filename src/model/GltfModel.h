@@ -19,13 +19,20 @@ namespace tinygltf
 class GltfModel
 {
 public:
-    bool loadModel(OGLRenderData& renderData, const std::string& modelFilename, const std::string& textureFilename);
+    static std::shared_ptr<GltfModel> make(OGLRenderData& renderData, const std::string& modelFilename,
+                                           const std::string& textureFilename);
+
+    ~GltfModel();
     void draw();
-    void cleanup();
     void uploadVertexBuffers();
     void uploadIndexBuffer();
 
+    const std::vector<glm::mat4>& getJointMatrices() const { return mJointMatrices; }
+
 private:
+    GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
+              OGLRenderData& renderData);
+
     void createVertexBuffers();
     void createIndexBuffer();
 
@@ -36,18 +43,13 @@ private:
 
     std::vector<int> mNodeToJoint;
 
-    std::vector<glm::u16vec4> mJoints;
-    std::vector<glm::vec4> mWeights;
-
     std::vector<glm::mat4> mInverseBindMatrices;
     std::vector<glm::mat4> mJointMatrices;
 
-    std::vector<glm::vec3> mAlteredPositions;
-
     std::vector<GLuint> mVertexVBO;
+
+    std::shared_ptr<Texture> mTex;
 
     GLuint mVAO      = 0;
     GLuint mIndexVBO = 0;
-
-    Texture mTex;
 };

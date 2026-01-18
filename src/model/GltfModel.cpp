@@ -28,21 +28,22 @@ int getAttributeIndex(std::string_view attribute)
     return std::distance(std::begin(ATTRIBUTES), std::ranges::find(ATTRIBUTES, attribute));
 }
 
-bool GltfModel::loadModel(OGLRenderData& renderData, const std::string& modelFilename,
-                          const std::string& textureFilename)
+std::shared_ptr<GltfModel> GltfModel::make(OGLRenderData& renderData, const std::string& modelFilename,
+                                           const std::string& textureFilename)
 {
-    if(mTex.loadTexture(textureFilename, false) == false)
+    std::shared_ptr<Texture> tex = Texture::make(textureFilename, false);
+    if(tex == nullptr)
     {
-        return false;
+        return nullptr;
     }
 
-    mModel = std::make_shared<tinygltf::Model>();
+    std::shared_ptr<tinygltf::Model> model = std::make_shared<tinygltf::Model>();
     tinygltf::TinyGLTF gltfLoader;
     std::string loaderErrors;
     std::string loaderWarnings;
     bool result = false;
 
-    result = gltfLoader.LoadASCIIFromFile(mModel.get(), &loaderErrors, &loaderWarnings, modelFilename);
+    result = gltfLoader.LoadASCIIFromFile(model.get(), &loaderErrors, &loaderWarnings, modelFilename);
 
     if(loaderWarnings.empty() == false)
     {
@@ -57,9 +58,16 @@ bool GltfModel::loadModel(OGLRenderData& renderData, const std::string& modelFil
     if(result == false)
     {
         Logger::log(1, "%s error: while loading file %s\n", __FUNCTION__, modelFilename.c_str());
-        return false;
+        return nullptr;
     }
 
+    return std::shared_ptr<GltfModel>(new GltfModel(model, tex, renderData));
+}
+
+GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
+                     OGLRenderData& renderData)
+    : mModel(model), mTex(tex)
+{
     glGenVertexArrays(1, &mVAO);
     glBindVertexArray(mVAO);
     createVertexBuffers();
@@ -92,25 +100,7 @@ bool GltfModel::loadModel(OGLRenderData& renderData, const std::string& modelFil
 
     mRootNode = GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices);
 
-    initializeFromBuffer(*mModel, getAttributeIndex("JOINTS_0"), mJoints);
-
-    initializeFromBuffer(*mModel, getAttributeIndex("WEIGHTS_0"), mWeights);
-
     std::cout << *mRootNode << std::endl;
-
-    for(int i = 0; i != mJoints.size(); i++)
-    {
-        glm::ivec4 jointIndex = glm::make_vec4(mJoints[i]);
-        glm::vec4 weightIndex = mWeights[i];
-
-        glm::mat4 skinMat = weightIndex.x * mJointMatrices[jointIndex.x] +
-                            weightIndex.y * mJointMatrices[jointIndex.y] +
-                            weightIndex.z * mJointMatrices[jointIndex.z] + weightIndex.w * mJointMatrices[jointIndex.w];
-
-        mAlteredPositions[i] = skinMat * glm::vec4(mAlteredPositions[i], 1.0f);
-    }
-
-    return true;
 }
 
 void GltfModel::draw()
@@ -129,44 +119,31 @@ void GltfModel::draw()
             break;
     }
 
-    mTex.bind();
+    mTex->bind();
     glBindVertexArray(mVAO);
     glDrawElements(drawMode, indexAccessor.count, indexAccessor.componentType, nullptr);
 
     glBindVertexArray(0);
-    mTex.unbind();
+    mTex->unbind();
 }
 
-void GltfModel::cleanup()
+GltfModel::~GltfModel()
 {
     glDeleteBuffers(mVertexVBO.size(), mVertexVBO.data());
     glDeleteBuffers(1, &mVAO);
     glDeleteBuffers(1, &mIndexVBO);
-    mTex.cleanup();
-    mModel.reset();
 }
 
 void GltfModel::uploadVertexBuffers()
 {
-    // for(int i = 0; i < std::size(ATTRIBUTES); i++)
-    for(int i = 0; i < 3; i++)
+    for(int i = 0; i < std::size(ATTRIBUTES); i++)
     {
-
         glBindBuffer(GL_ARRAY_BUFFER, mVertexVBO[i]);
-        if(getAttributeIndex("POSITION") == i)
-        {
-            glBufferData(GL_ARRAY_BUFFER, mAlteredPositions.size() * sizeof(glm::vec3), mAlteredPositions.data(),
-                         GL_STATIC_DRAW);
-        }
-        else
-        {
-            const tinygltf::Accessor& accessor     = mModel->accessors[i];
-            const tinygltf::BufferView& bufferView = mModel->bufferViews[accessor.bufferView];
-            const tinygltf::Buffer& buffer         = mModel->buffers[bufferView.buffer];
+        const tinygltf::Accessor& accessor     = mModel->accessors[i];
+        const tinygltf::BufferView& bufferView = mModel->bufferViews[accessor.bufferView];
+        const tinygltf::Buffer& buffer         = mModel->buffers[bufferView.buffer];
 
-            glBufferData(GL_ARRAY_BUFFER, bufferView.byteLength, &buffer.data[0] + bufferView.byteOffset,
-                         GL_STATIC_DRAW);
-        }
+        glBufferData(GL_ARRAY_BUFFER, bufferView.byteLength, &buffer.data[0] + bufferView.byteOffset, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 }
@@ -193,11 +170,6 @@ void GltfModel::createVertexBuffers()
         if(std::ranges::contains(ATTRIBUTES, attribType) == false)
         {
             continue;
-        }
-
-        if(attribType == "POSITION")
-        {
-            initializeFromBuffer(*mModel, accessorNum, mAlteredPositions);
         }
 
         const tinygltf::Accessor& accessor = mModel->accessors[accessorNum];
