@@ -6,7 +6,7 @@ UniformBuffer::UniformBuffer(int bindingPoint, int bufferSize) : mBufferSize(buf
 {
     glGenBuffers(1, &mUboBuffer);
     glBindBuffer(GL_UNIFORM_BUFFER, mUboBuffer);
-    glBufferData(GL_UNIFORM_BUFFER, mBufferSize, NULL, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, mBufferSize, NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
