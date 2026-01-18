@@ -35,8 +35,8 @@ private:
     std::shared_ptr<Shader> mGltfShader;
     Framebuffer mFramebuffer;
     VertexBuffer mVertexBuffer;
-    std::shared_ptr<UniformBuffer> m_UniformBuffer;
-    std::shared_ptr<UniformBuffer> m_UniformBufferJointMatrices;
+    std::shared_ptr<UniformBuffer> mUniformBuffer;
+    std::shared_ptr<UniformBuffer> mUniformBufferJointMatrices;
     std::shared_ptr<GltfModel> mGltfModel;
 
     glm::mat4 mViewMatrix       = glm::mat4(1.0);

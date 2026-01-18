@@ -83,8 +83,11 @@ std::shared_ptr<Shader> Shader::make(const std::string& vertexShaderFilename, co
 
 Shader::Shader(GLuint shaderProgram) : mShaderProgram(shaderProgram)
 {
-    GLint uboIndex = glGetUniformBlockIndex(mShaderProgram, "Matrices");
-    glUniformBlockBinding(mShaderProgram, uboIndex, 0);
+    GLint uboMatricesIndex = glGetUniformBlockIndex(mShaderProgram, "Matrices");
+    glUniformBlockBinding(mShaderProgram, uboMatricesIndex, 0);
+
+    GLint uboJointMatricesIndex = glGetUniformBlockIndex(mShaderProgram, "JointMatrices");
+    glUniformBlockBinding(mShaderProgram, uboJointMatricesIndex, 1);
 }
 
 void Shader::use() { glUseProgram(mShaderProgram); }

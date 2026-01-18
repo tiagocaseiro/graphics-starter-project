@@ -62,7 +62,8 @@ OGLRenderer::OGLRenderer(const std::shared_ptr<Shader>& gltfShader, const Frameb
       mFramebuffer(framebuffer),
       mGltfModel(gltfModel),
       mRenderData(renderData),
-      m_UniformBuffer(UniformBuffer::make()),
+      mUniformBuffer(UniformBuffer::make(2 * sizeof(glm::mat4))),
+      mUniformBufferJointMatrices(UniformBuffer::make(gltfModel->getJointMatrices().size() * sizeof(glm::mat4))),
       mUserInterface(renderData)
 {
 }
@@ -111,15 +112,15 @@ void OGLRenderer::draw()
 
     mViewMatrix = mCamera.getViewMatrix(mRenderData) * model;
 
-    if(m_UniformBuffer)
+    if(mUniformBuffer)
     {
-        m_UniformBuffer->uploadUboData(mViewMatrix, mProjectionMatrix);
+        mUniformBuffer->uploadUboData(mViewMatrix, mProjectionMatrix);
     }
 
-    // if(m_UniformBufferJointMatrices)
-    // {
-    //     m_UniformBufferJointMatrices->uploadUboData(mGltfModel->getJointMatrices());
-    // }
+    if(mUniformBufferJointMatrices)
+    {
+        mUniformBufferJointMatrices->uploadUboData(mGltfModel->getJointMatrices());
+    }
 
     mGltfModel->draw();
 
@@ -203,8 +204,6 @@ void OGLRenderer::handleMousePositionEvents(double xPos, double yPos)
         }
 
         mRenderData.rdViewElevation -= mouseMoveRelY / 10.0f;
-
-        std::cout << std::endl;
 
         if(mRenderData.rdViewElevation > 89.0f)
         {

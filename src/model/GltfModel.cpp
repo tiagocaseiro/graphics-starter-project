@@ -200,6 +200,9 @@ void GltfModel::createVertexBuffers()
             case TINYGLTF_COMPONENT_TYPE_FLOAT:
                 dataType = GL_FLOAT;
                 break;
+            case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+                dataType = GL_UNSIGNED_SHORT;
+                break;
             default:
                 Logger::log(1, "%s error: accessor %i uses unknown data type %i\n", __FUNCTION__, accessorNum,
                             dataType);
