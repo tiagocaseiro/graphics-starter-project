@@ -29,10 +29,10 @@ public:
     void handleMovementKeys();
 
 private:
-    OGLRenderer(const Shader& mGltfShader, const Framebuffer& mFramebuffer, const std::shared_ptr<GltfModel>& gltfModel,
-                const OGLRenderData& mRenderData);
+    OGLRenderer(const std::shared_ptr<Shader>& mGltfShader, const Framebuffer& mFramebuffer,
+                const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& mRenderData);
 
-    Shader mGltfShader;
+    std::shared_ptr<Shader> mGltfShader;
     Framebuffer mFramebuffer;
     VertexBuffer mVertexBuffer;
     std::shared_ptr<UniformBuffer> m_UniformBuffer;

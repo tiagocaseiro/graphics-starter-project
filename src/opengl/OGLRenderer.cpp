@@ -21,7 +21,6 @@ std::shared_ptr<OGLRenderer> OGLRenderer::make(const int width, const int height
     }
 
     Framebuffer framebuffer;
-
     if(framebuffer.init(width, height) == false)
     {
         return nullptr;
@@ -33,9 +32,8 @@ std::shared_ptr<OGLRenderer> OGLRenderer::make(const int width, const int height
     renderData.rdHeight = height;
     renderData.rdWindow = window;
 
-    Shader gltfShader;
-
-    if(gltfShader.loadShaders("../shaders/gltf.vert", "../shaders/gltf.frag") == false)
+    std::shared_ptr<Shader> gltfShader = Shader::make("../shaders/gltf.vert", "../shaders/gltf.frag");
+    if(gltfShader == nullptr)
     {
         return nullptr;
     }
@@ -58,16 +56,15 @@ std::shared_ptr<OGLRenderer> OGLRenderer::make(const int width, const int height
     return std::shared_ptr<OGLRenderer>(new OGLRenderer(gltfShader, framebuffer, gltfModel, renderData));
 }
 
-OGLRenderer::OGLRenderer(const Shader& gltfShader, const Framebuffer& framebuffer,
+OGLRenderer::OGLRenderer(const std::shared_ptr<Shader>& gltfShader, const Framebuffer& framebuffer,
                          const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& renderData)
     : mGltfShader(gltfShader),
       mFramebuffer(framebuffer),
       mGltfModel(gltfModel),
       mRenderData(renderData),
-      m_UniformBuffer(UniformBuffer::make())
+      m_UniformBuffer(UniformBuffer::make()),
+      mUserInterface(renderData)
 {
-    mVertexBuffer.init();
-    mUserInterface.init(mRenderData);
 }
 
 void OGLRenderer::setSize(const int width, const int height)
@@ -79,14 +76,7 @@ void OGLRenderer::setSize(const int width, const int height)
     glViewport(0, 0, width, height);
 }
 
-OGLRenderer::~OGLRenderer()
-{
-    mUserInterface.cleanup();
-    mGltfModel.reset();
-    mGltfShader.cleanup();
-    mFramebuffer.cleanup();
-    mVertexBuffer.cleanup();
-}
+OGLRenderer::~OGLRenderer() { mFramebuffer.cleanup(); }
 
 void OGLRenderer::uploadData(const OGLMesh& vertexData)
 {
@@ -117,7 +107,7 @@ void OGLRenderer::draw()
 
     glm::mat4 model = glm::mat4(1.0);
 
-    mGltfShader.use();
+    mGltfShader->use();
 
     mViewMatrix = mCamera.getViewMatrix(mRenderData) * model;
 

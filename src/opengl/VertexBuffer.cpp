@@ -1,6 +1,6 @@
 #include "VertexBuffer.h"
 
-void VertexBuffer::init()
+VertexBuffer::VertexBuffer()
 {
     glGenVertexArrays(1, &mVAO);
     glGenBuffers(1, &mVertexVBO);
@@ -20,6 +20,12 @@ void VertexBuffer::init()
     glBindVertexArray(0);
 }
 
+VertexBuffer::~VertexBuffer()
+{
+    glDeleteBuffers(1, &mVertexVBO);
+    glDeleteVertexArrays(1, &mVAO);
+}
+
 void VertexBuffer::uploadData(const OGLMesh& vertexData)
 {
     glBindVertexArray(mVAO);
@@ -30,23 +36,8 @@ void VertexBuffer::uploadData(const OGLMesh& vertexData)
     glBindVertexArray(0);
 }
 
-void VertexBuffer::bind()
-{
-    glBindVertexArray(mVAO);
-}
+void VertexBuffer::bind() { glBindVertexArray(mVAO); }
 
-void VertexBuffer::unbind()
-{
-    glBindVertexArray(0);
-}
+void VertexBuffer::unbind() { glBindVertexArray(0); }
 
-void VertexBuffer::draw(GLuint mode, const int start, const int num)
-{
-    glDrawArrays(mode, start, num);
-}
-
-void VertexBuffer::cleanup()
-{
-    glDeleteBuffers(1, &mVertexVBO);
-    glDeleteVertexArrays(1, &mVAO);
-}
+void VertexBuffer::draw(GLuint mode, const int start, const int num) { glDrawArrays(mode, start, num); }

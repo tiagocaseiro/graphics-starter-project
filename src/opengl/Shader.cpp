@@ -2,53 +2,7 @@
 
 #include <fstream>
 
-bool Shader::loadShaders(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
-{
-    GLuint vertexShader = readShader(vertexShaderFilename, GL_VERTEX_SHADER);
-    if(!vertexShader)
-    {
-        return false;
-    }
-    GLuint fragmentShader = readShader(fragmentShaderFilename, GL_FRAGMENT_SHADER);
-    if(!fragmentShader)
-    {
-        return false;
-    }
-
-    mShaderProgram = glCreateProgram();
-    glAttachShader(mShaderProgram, vertexShader);
-    glAttachShader(mShaderProgram, fragmentShader);
-    glLinkProgram(mShaderProgram);
-
-    GLint isProgramLinked;
-
-    glGetProgramiv(mShaderProgram, GL_LINK_STATUS, &isProgramLinked);
-
-    if(!isProgramLinked)
-    {
-        return false;
-    }
-
-    GLint uboIndex = glGetUniformBlockIndex(mShaderProgram, "Matrices");
-    glUniformBlockBinding(mShaderProgram, uboIndex, 0);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return true;
-}
-
-void Shader::use()
-{
-    glUseProgram(mShaderProgram);
-}
-
-void Shader::cleanup()
-{
-    glDeleteProgram(mShaderProgram);
-}
-
-GLuint Shader::readShader(const std::string shaderFilename, GLuint shaderType)
+static GLuint readShader(const std::string shaderFilename, GLuint shaderType)
 {
     std::string shaderAsText;
     std::ifstream inFile(shaderFilename);
@@ -91,3 +45,48 @@ GLuint Shader::readShader(const std::string shaderFilename, GLuint shaderType)
 
     return shader;
 }
+
+std::shared_ptr<Shader> Shader::make(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+{
+    GLuint vertexShader = readShader(vertexShaderFilename, GL_VERTEX_SHADER);
+    if(!vertexShader)
+    {
+        return nullptr;
+    }
+    GLuint fragmentShader = readShader(fragmentShaderFilename, GL_FRAGMENT_SHADER);
+    if(!fragmentShader)
+    {
+        return nullptr;
+    }
+
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    GLint isProgramLinked;
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &isProgramLinked);
+
+    if(!isProgramLinked)
+    {
+        return nullptr;
+    }
+
+    std::shared_ptr<Shader> shader = std::shared_ptr<Shader>(new Shader(shaderProgram));
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return shader;
+}
+
+Shader::Shader(GLuint shaderProgram) : mShaderProgram(shaderProgram)
+{
+    GLint uboIndex = glGetUniformBlockIndex(mShaderProgram, "Matrices");
+    glUniformBlockBinding(mShaderProgram, uboIndex, 0);
+}
+
+void Shader::use() { glUseProgram(mShaderProgram); }
+
+Shader::~Shader() { glDeleteProgram(mShaderProgram); }

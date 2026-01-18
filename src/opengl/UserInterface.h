@@ -5,10 +5,10 @@
 class UserInterface
 {
 public:
-    void init(const OGLRenderData& renderData);
+    UserInterface(const OGLRenderData& renderData);
+    ~UserInterface();
     void createFrame(const OGLRenderData& renderData);
     void render();
-    void cleanup();
 
 private:
     float framesPerSecond = 0.0f;

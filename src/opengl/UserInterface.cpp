@@ -7,13 +7,20 @@
 
 #include "OGLRenderData.h"
 
-void UserInterface::init(const OGLRenderData& renderData)
+UserInterface::UserInterface(const OGLRenderData& renderData)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(renderData.rdWindow, true);
     static constexpr auto glslVersion = "#version 460 core";
     ImGui_ImplOpenGL3_Init(glslVersion);
+}
+
+UserInterface::~UserInterface()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void UserInterface::createFrame(const OGLRenderData& renderData)
@@ -79,11 +86,4 @@ void UserInterface::render()
 {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void UserInterface::cleanup()
-{
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 }

@@ -7,12 +7,12 @@
 class VertexBuffer
 {
 public:
-    void init();
+    VertexBuffer();
+    ~VertexBuffer();
     void uploadData(const OGLMesh& vertexData);
     void bind();
     void unbind();
     void draw(GLuint mode, const int start, const int num);
-    void cleanup();
 
 private:
     GLuint mVAO       = 0;
