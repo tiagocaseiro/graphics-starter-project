@@ -17,6 +17,8 @@ layout(std140, binding = 0) uniform Matrices
 
 layout(std430, binding = 1) readonly buffer JointMatrices { mat4 jointMat[]; };
 
+layout(std430, binding = 2) readonly buffer JointDualQuats { mat2x4 jointDQs[]; };
+
 void main()
 {
     normal   = aNormal;

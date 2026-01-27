@@ -2,6 +2,7 @@
 
 #include "FrameBuffer.h"
 #include "OGLRenderData.h"
+#include "ShaderStorageBuffer.h"
 #include "UserInterface.h"
 #include "VertexBuffer.h"
 #include "tools/Camera.h"
@@ -10,7 +11,6 @@
 struct GLFWWindow;
 class GltfModel;
 class UniformBuffer;
-class ShaderStorageBuffer;
 class Shader;
 
 class OGLRenderer
@@ -36,7 +36,8 @@ private:
     Framebuffer mFramebuffer;
     VertexBuffer mVertexBuffer;
     std::shared_ptr<UniformBuffer> mUniformBuffer;
-    std::shared_ptr<ShaderStorageBuffer> mShaderStorageBufferJointMatrices;
+    std::shared_ptr<ShaderStorageBuffer<glm::mat4>> mShaderStorageBufferJointMatrices;
+    std::shared_ptr<ShaderStorageBuffer<glm::mat2x4>> mShaderStorageBufferJointDualQuats;
     std::shared_ptr<GltfModel> mGltfModel;
 
     glm::mat4 mViewMatrix       = glm::mat4(1.0);

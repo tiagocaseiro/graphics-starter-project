@@ -1,8 +1,12 @@
 #include "GltfModel.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <algorithm>
 
 #include <glm/glm/gtc/type_ptr.hpp>
+#include <glm/glm/gtx/dual_quaternion.hpp>
+#include <glm/glm/gtx/matrix_decompose.hpp>
 
 #include <tinygltf/tiny_gltf.h>
 
@@ -100,6 +104,26 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
 
     mRootNode = GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices);
 
+    mJointDualQuats.resize(skin.joints.size());
+
+    for(int i = 0; i != mJointMatrices.size(); i++)
+    {
+        glm::vec3 scale;
+        glm::quat orientation;
+        glm::vec3 translation;
+        glm::vec3 skew;
+        glm::vec4 perspective;
+
+        if(glm::decompose(mJointMatrices[i], scale, orientation, translation, skew, perspective))
+        {
+            glm::dualquat dq;
+
+            dq[0] = orientation;
+            dq[1] = glm::quat(0.0, translation.x, translation.y, translation.z) * orientation * 0.5f;
+
+            mJointDualQuats[i] = glm::mat2x4_cast(dq);
+        }
+    }
     std::cout << *mRootNode << std::endl;
 }
 
