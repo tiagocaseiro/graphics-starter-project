@@ -67,7 +67,8 @@ OGLRenderer::OGLRenderer(const std::shared_ptr<Shader>& gltfShader, const Frameb
       mRenderData(renderData),
       mUniformBuffer(UniformBuffer::make(0, 2 * sizeof(glm::mat4))),
       mShaderStorageBufferJointMatrices(ShaderStorageBuffer<glm::mat4>::make(1, gltfModel->getJointMatrices())),
-      mShaderStorageBufferJointDualQuats(ShaderStorageBuffer<glm::mat2x4>::make(2, gltfModel->getJointDualQuats())),
+      //   mShaderStorageBufferJointDualQuats(ShaderStorageBuffer<glm::mat2x4>::make(2,
+      //   gltfModel->getJointDualQuats())),
       mUserInterface(renderData)
 {
 }
@@ -126,10 +127,10 @@ void OGLRenderer::draw()
         mShaderStorageBufferJointMatrices->uploadData(mGltfModel->getJointMatrices());
     }
 
-    if(mShaderStorageBufferJointDualQuats)
-    {
-        mShaderStorageBufferJointDualQuats->uploadData(mGltfModel->getJointDualQuats());
-    }
+    // if(mShaderStorageBufferJointDualQuats)
+    // {
+    //     mShaderStorageBufferJointDualQuats->uploadData(mGltfModel->getJointDualQuats());
+    // }
 
     mGltfModel->draw();
 

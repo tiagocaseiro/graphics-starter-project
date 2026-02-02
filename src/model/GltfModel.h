@@ -28,7 +28,7 @@ public:
     void uploadIndexBuffer();
 
     const std::vector<glm::mat4>& getJointMatrices() const { return mJointMatrices; }
-    const std::vector<glm::mat2x4>& getJointDualQuats() const { return mJointDualQuats; }
+    // const std::vector<glm::mat2x4>& getJointDualQuats() const { return mJointDualQuats; }
 
 private:
     GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
@@ -44,7 +44,7 @@ private:
 
     std::vector<int> mNodeToJoint;
 
-    std::vector<glm::mat2x4> mJointDualQuats;
+    // std::vector<glm::mat2x4> mJointDualQuats;
 
     std::vector<glm::mat4> mInverseBindMatrices;
     std::vector<glm::mat4> mJointMatrices;
