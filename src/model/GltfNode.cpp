@@ -1,8 +1,8 @@
 #include "GltfNode.h"
 
-#include <glm/glm/gtc/type_ptr.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-#include <tinygltf/tiny_gltf.h>
+#include <tiny_gltf.h>
 
 void printWhitespace(std::ostream& os, const int width)
 {

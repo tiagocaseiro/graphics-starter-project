@@ -4,11 +4,11 @@
 
 #include <algorithm>
 
-#include <glm/glm/gtc/type_ptr.hpp>
-#include <glm/glm/gtx/dual_quaternion.hpp>
-#include <glm/glm/gtx/matrix_decompose.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/dual_quaternion.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
-#include <tinygltf/tiny_gltf.h>
+#include <tiny_gltf.h>
 
 #include "GltfNode.h"
 #include "Logger.h"
