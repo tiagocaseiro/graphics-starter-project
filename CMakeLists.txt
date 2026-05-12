@@ -5,14 +5,14 @@ project(starter-project LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(src)
-
-file(GLOB SOURCE_FILES_PATH src/tinygltf/tiny_gltf.cc src/opengl/*.cpp src/tools/*.cpp src/model/*.cpp src/*.cpp src/imgui/*.cpp)
+find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
+file(GLOB SOURCE_FILES_PATH src/opengl/*.cpp src/tools/*.cpp src/model/*.cpp src/*.cpp src/imgui/*.cpp)
 
 add_executable(starter-project ${SOURCE_FILES_PATH}) 
 
 set_target_properties(starter-project PROPERTIES LINKER_LANGUAGE CXX)
 
+target_include_directories(starter-project PRIVATE ${TINYGLTF_INCLUDE_DIRS})
 target_include_directories(starter-project PUBLIC src)
 
 find_package(glfw3 CONFIG REQUIRED)
