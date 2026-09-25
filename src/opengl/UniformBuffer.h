@@ -6,10 +6,14 @@
 
 #include <glad/glad.h>
 
+#include "tools/Macros.h"
+
+SHARED_ONLY(UniformBuffer);
+
 class UniformBuffer
 {
 public:
-    static std::shared_ptr<UniformBuffer> make(int bindingPoint, int bufferSize);
+    static UniformBufferShared make(int bindingPoint, int bufferSize);
 
     ~UniformBuffer();
     void uploadData(const std::vector<glm::mat4>& matrices);

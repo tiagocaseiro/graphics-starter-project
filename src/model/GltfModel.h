@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "opengl/Texture.h"
+#include "tools/Macros.h"
 
 class OGLRenderData;
 class GltfNode;
@@ -16,11 +17,13 @@ namespace tinygltf
     class Model;
 }
 
+SHARED_ONLY(GltfModel)
+
 class GltfModel
 {
 public:
-    static std::shared_ptr<GltfModel> make(OGLRenderData& renderData, const std::string& modelFilename,
-                                           const std::string& textureFilename);
+    static GltfModelShared make(OGLRenderData& renderData, const std::string& modelFilename,
+                                const std::string& textureFilename);
 
     ~GltfModel();
     void draw();

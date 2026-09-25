@@ -46,7 +46,7 @@ static GLuint readShader(const std::string shaderFilename, GLuint shaderType)
     return shader;
 }
 
-std::shared_ptr<Shader> Shader::make(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+ShaderShared Shader::make(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
 {
     GLuint vertexShader = readShader(vertexShaderFilename, GL_VERTEX_SHADER);
     if(!vertexShader)
@@ -73,7 +73,7 @@ std::shared_ptr<Shader> Shader::make(const std::string& vertexShaderFilename, co
         return nullptr;
     }
 
-    std::shared_ptr<Shader> shader = std::shared_ptr<Shader>(new Shader(shaderProgram));
+    ShaderShared shader = ShaderShared(new Shader(shaderProgram));
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);

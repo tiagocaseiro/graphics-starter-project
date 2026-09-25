@@ -17,7 +17,7 @@ public:
     void mainLoop();
     void cleanup();
 
-    const std::shared_ptr<OGLRenderer>& getRenderer() { return mRenderer; }
+    const OGLRendererShared& getRenderer() { return mRenderer; }
 
 private:
     void handleWindowCloseEvents();
@@ -25,6 +25,6 @@ private:
 
     GLFWwindow* mWindow = nullptr;
 
-    std::shared_ptr<OGLRenderer> mRenderer;
+    OGLRendererShared mRenderer;
     std::unique_ptr<Model> mModel;
 };

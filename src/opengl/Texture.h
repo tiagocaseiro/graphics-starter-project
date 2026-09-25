@@ -5,10 +5,14 @@
 
 #include <glad/glad.h>
 
+#include "tools/Macros.h"
+
+SHARED_ONLY(Texture)
+
 class Texture
 {
 public:
-    static std::shared_ptr<Texture> make(const std::string& textureFilename, const bool flipImage = true);
+    static TextureShared make(const std::string& textureFilename, const bool flipImage = true);
     void bind();
     void unbind();
 

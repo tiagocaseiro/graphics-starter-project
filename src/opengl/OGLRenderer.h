@@ -6,6 +6,7 @@
 #include "UserInterface.h"
 #include "VertexBuffer.h"
 #include "tools/Camera.h"
+#include "tools/Macros.h"
 #include "tools/Timer.h"
 
 struct GLFWWindow;
@@ -13,10 +14,12 @@ class GltfModel;
 class UniformBuffer;
 class Shader;
 
+SHARED_ONLY(OGLRenderer)
+
 class OGLRenderer
 {
 public:
-    static std::shared_ptr<OGLRenderer> make(const int width, const int height, GLFWwindow* window);
+    static OGLRendererShared make(const int width, const int height, GLFWwindow* window);
 
     ~OGLRenderer();
 

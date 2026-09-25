@@ -16,7 +16,7 @@
 #include "UniformBuffer.h"
 #include "model/GltfModel.h"
 
-std::shared_ptr<OGLRenderer> OGLRenderer::make(const int width, const int height, GLFWwindow* window)
+OGLRendererShared OGLRenderer::make(const int width, const int height, GLFWwindow* window)
 {
     if(gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == false || GLAD_GL_VERSION_4_6 == false)
     {
@@ -44,7 +44,7 @@ std::shared_ptr<OGLRenderer> OGLRenderer::make(const int width, const int height
     static constexpr auto modelFileName    = "../assets/Woman.gltf";
     static constexpr auto modelTexFilename = "../textures/Woman.png";
 
-    std::shared_ptr<GltfModel> gltfModel = GltfModel::make(renderData, modelFileName, modelTexFilename);
+    GltfModelShared gltfModel = GltfModel::make(renderData, modelFileName, modelTexFilename);
 
     if(gltfModel == nullptr)
     {
@@ -56,7 +56,7 @@ std::shared_ptr<OGLRenderer> OGLRenderer::make(const int width, const int height
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
 
-    return std::shared_ptr<OGLRenderer>(new OGLRenderer(gltfShader, framebuffer, gltfModel, renderData));
+    return OGLRendererShared(new OGLRenderer(gltfShader, framebuffer, gltfModel, renderData));
 }
 
 OGLRenderer::OGLRenderer(const std::shared_ptr<Shader>& gltfShader, const Framebuffer& framebuffer,

@@ -32,8 +32,8 @@ int getAttributeIndex(std::string_view attribute)
     return std::distance(std::begin(ATTRIBUTES), std::ranges::find(ATTRIBUTES, attribute));
 }
 
-std::shared_ptr<GltfModel> GltfModel::make(OGLRenderData& renderData, const std::string& modelFilename,
-                                           const std::string& textureFilename)
+GltfModelShared GltfModel::make(OGLRenderData& renderData, const std::string& modelFilename,
+                                const std::string& textureFilename)
 {
     std::shared_ptr<Texture> tex = Texture::make(textureFilename, false);
     if(tex == nullptr)
@@ -65,7 +65,7 @@ std::shared_ptr<GltfModel> GltfModel::make(OGLRenderData& renderData, const std:
         return nullptr;
     }
 
-    return std::shared_ptr<GltfModel>(new GltfModel(model, tex, renderData));
+    return GltfModelShared(new GltfModel(model, tex, renderData));
 }
 
 GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,

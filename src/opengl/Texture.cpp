@@ -2,7 +2,7 @@
 
 #include <stb_image.h>
 
-std::shared_ptr<Texture> Texture::make(const std::string& textureFilename, const bool flipImage)
+TextureShared Texture::make(const std::string& textureFilename, const bool flipImage)
 {
     int texWidth       = 0;
     int texHeight      = 0;
@@ -18,8 +18,7 @@ std::shared_ptr<Texture> Texture::make(const std::string& textureFilename, const
         return nullptr;
     }
 
-    std::shared_ptr<Texture> texture =
-        std::shared_ptr<Texture>(new Texture(textureData, texWidth, texHeight, numberChannels));
+    TextureShared texture = TextureShared(new Texture(textureData, texWidth, texHeight, numberChannels));
 
     stbi_image_free(textureData);
 

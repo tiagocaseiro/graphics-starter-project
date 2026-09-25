@@ -5,6 +5,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <tiny_gltf.h>
 
+#include "tools/Macros.h"
+
 enum class ETargetPath
 {
     ROTATION,
@@ -19,11 +21,13 @@ enum class EInterpolationType
     CUBICSPLINE
 };
 
+SHARED_ONLY(GltfAnimationChannel)
+
 class GltfAnimationChannel
 {
 public:
-    static std::shared_ptr<GltfAnimationChannel> make(const tinygltf::Model& model, const tinygltf::Animation& anim,
-                                                      const tinygltf::AnimationChannel& channel);
+    static GltfAnimationChannelShared make(const tinygltf::Model& model, const tinygltf::Animation& anim,
+                                           const tinygltf::AnimationChannel& channel);
 
     glm::quat getRotation(float time) const;
     glm::vec3 getTranslation(float time) const;

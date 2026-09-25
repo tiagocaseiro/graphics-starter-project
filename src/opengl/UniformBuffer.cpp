@@ -29,7 +29,7 @@ void UniformBuffer::uploadData(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-std::shared_ptr<UniformBuffer> UniformBuffer::make(int bindingPoint, int bufferSize)
+UniformBufferShared UniformBuffer::make(int bindingPoint, int bufferSize)
 {
-    return std::shared_ptr<UniformBuffer>(new UniformBuffer(bindingPoint, bufferSize));
+    return UniformBufferShared(new UniformBuffer(bindingPoint, bufferSize));
 }

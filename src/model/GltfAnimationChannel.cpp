@@ -111,9 +111,8 @@ static T getTransformForTime(std::vector<T> const& transforms, std::vector<float
     return finalTransform;
 }
 
-std::shared_ptr<GltfAnimationChannel> GltfAnimationChannel::make(const tinygltf::Model& model,
-                                                                 const tinygltf::Animation& anim,
-                                                                 const tinygltf::AnimationChannel& channel)
+GltfAnimationChannelShared GltfAnimationChannel::make(const tinygltf::Model& model, const tinygltf::Animation& anim,
+                                                      const tinygltf::AnimationChannel& channel)
 {
     const int targetNode = channel.target_node;
 
@@ -166,7 +165,7 @@ std::shared_ptr<GltfAnimationChannel> GltfAnimationChannel::make(const tinygltf:
         scaling    = initializeTransformations<glm::vec3>(outputAccessor, outputBufferView, outputBuffer);
     }
 
-    return std::shared_ptr<GltfAnimationChannel>(
+    return GltfAnimationChannelShared(
         new GltfAnimationChannel(targetNode, timings, interType, targetPath, rotations, translations, scaling));
 }
 

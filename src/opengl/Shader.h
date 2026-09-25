@@ -5,11 +5,14 @@
 
 #include <glad/glad.h>
 
+#include "tools/Macros.h"
+
+SHARED_ONLY(Shader)
+
 class Shader
 {
 public:
-    static std::shared_ptr<Shader> make(const std::string& vertexShaderFilename,
-                                        const std::string& fragmentShaderFilename);
+    static ShaderShared make(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
     void use();
     ~Shader();
 
