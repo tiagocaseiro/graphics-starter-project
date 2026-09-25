@@ -170,26 +170,20 @@ std::shared_ptr<GltfAnimationChannel> GltfAnimationChannel::make(const tinygltf:
         new GltfAnimationChannel(targetNode, timings, interType, targetPath, rotations, translations, scaling));
 }
 
-int GltfAnimationChannel::getTargetNode() const { return 0; }
-
-ETargetPath GltfAnimationChannel::getTargetPath() const { return ETargetPath(); }
-
-glm::vec3 GltfAnimationChannel::getScaling(float time)
+glm::vec3 GltfAnimationChannel::getScaling(float time) const
 {
     return getTransformForTime<ETargetPath::SCALE>(mScaling, mTimings, mInterType, time);
 }
 
-glm::vec3 GltfAnimationChannel::getTranslation(float time)
+glm::vec3 GltfAnimationChannel::getTranslation(float time) const
 {
     return getTransformForTime<ETargetPath::TRANSLATION>(mTranslations, mTimings, mInterType, time);
 }
 
-glm::quat GltfAnimationChannel::getRotation(float time)
+glm::quat GltfAnimationChannel::getRotation(float time) const
 {
     return getTransformForTime<ETargetPath::ROTATION>(mRotations, mTimings, mInterType, time);
 }
-
-float GltfAnimationChannel::getMaxTime() const { return 0.0f; }
 
 GltfAnimationChannel::GltfAnimationChannel(int targetNode, const std::vector<float>& timings,
                                            EInterpolationType interType, const ETargetPath targetPath,
@@ -205,11 +199,3 @@ GltfAnimationChannel::GltfAnimationChannel(int targetNode, const std::vector<flo
       mScaling(scaling)
 {
 }
-
-void GltfAnimationChannel::SetTimings(const std::vector<float>& timings) {}
-
-void GltfAnimationChannel::SetScaling(const std::vector<glm::vec3>& scaling) {}
-
-void GltfAnimationChannel::SetTranslations(const std::vector<glm::vec3>& translation) {}
-
-void GltfAnimationChannel::SetRotations(const std::vector<glm::vec3>& rotation) {}
