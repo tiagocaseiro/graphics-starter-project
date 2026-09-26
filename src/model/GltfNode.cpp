@@ -50,6 +50,15 @@ GltfNodeShared GltfNode::createNodeTree(const int nodeNum, const tinygltf::Model
     return createNode(nullptr, nodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices);
 }
 
+void GltfNode::calculateLocalTRSMatrix()
+{
+    glm::mat4 const sMatrix = glm::scale(glm::mat4(1.0f), mScale);
+    glm::mat4 const rMatrix = glm::mat4_cast(mRotation);
+    glm::mat4 const tMatrix = glm::translate(glm::mat4(1.0f), mTranslation);
+
+    mLocalTRSMatrix = tMatrix * rMatrix * sMatrix;
+}
+
 GltfNode::GltfNode(const GltfNodeShared parent, const int nodeNum, const tinygltf::Model& model,
                    const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
                    std::vector<glm::mat4>& jointMatrices)
@@ -73,11 +82,7 @@ GltfNode::GltfNode(const GltfNodeShared parent, const int nodeNum, const tinyglt
         mTranslation = glm::make_vec3(node.translation.data());
     }
 
-    const glm::mat4 sMatrix = glm::scale(glm::mat4(1.0f), mScale);
-    const glm::mat4 rMatrix = glm::mat4_cast(mRotation);
-    const glm::mat4 tMatrix = glm::translate(glm::mat4(1.0f), mTranslation);
-
-    mLocalTRSMatrix = tMatrix * rMatrix * sMatrix;
+    calculateLocalTRSMatrix();
 
     const glm::mat4 parentNodeMatrix = parent ? parent->mNodeMatrix : glm::mat4(1.0f);
 

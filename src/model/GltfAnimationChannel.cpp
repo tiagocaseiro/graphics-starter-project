@@ -107,6 +107,8 @@ static T getTransformForTime(std::vector<T> const& transforms, std::vector<float
 
             break;
         }
+        default:
+            break;
     }
     return finalTransform;
 }
