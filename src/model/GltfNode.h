@@ -9,6 +9,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include <tiny_gltf.h>
+
 #include "GltfCommon.h"
 #include "tools/Macros.h"
 
@@ -39,6 +41,8 @@ public:
     void calculateTreeMatrices(const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
                                glm::mat4 const& parentMatrix, std::vector<glm::mat4>& jointMatrices);
 
+    const std::string mNodeName;
+
 private:
     static GltfNodeShared createNode(const std::shared_ptr<GltfNode> parent, const int nodeNum,
                                      const tinygltf::Model& model, const std::vector<int>& nodeToJoint,
@@ -52,8 +56,6 @@ private:
     std::vector<GltfNodeShared> mChildNodes;
 
     const int mNodeNum;
-
-    std::string mNodeName;
 
     glm::vec3 mScale       = DEFAULT_SCALE;
     glm::vec3 mTranslation = DEFAULT_TRANSLATION;

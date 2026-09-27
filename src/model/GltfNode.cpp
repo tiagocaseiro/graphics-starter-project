@@ -80,11 +80,10 @@ void GltfNode::calculateTreeMatrices(const std::vector<int>& nodeToJoint,
 GltfNode::GltfNode(const GltfNodeShared parent, const int nodeNum, const tinygltf::Model& model,
                    const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
                    std::vector<glm::mat4>& jointMatrices)
-    : mNodeNum(nodeNum)
+    : mNodeNum(nodeNum), mNodeName(model.nodes[nodeNum].name)
 {
     const tinygltf::Node& node = model.nodes[nodeNum];
 
-    mNodeName = node.name;
     if(node.scale.empty() == false)
     {
         mScale = glm::make_vec3(node.scale.data());

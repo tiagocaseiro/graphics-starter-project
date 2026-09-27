@@ -1,7 +1,11 @@
 #pragma once
 
 #include <cstdio>
+#include <iostream>
 #include <utility>
+
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #define LOG_VAR(var) std::cout << #var << ": " << var << std::endl;
 
@@ -23,3 +27,8 @@ public:
 private:
     static int mLogLevel;
 };
+
+std::ostream& operator<<(std::ostream& os, glm::vec3 const& vec);
+std::ostream& operator<<(std::ostream& os, glm::vec4 const& vec);
+std::ostream& operator<<(std::ostream& os, glm::quat const& quat);
+std::ostream& operator<<(std::ostream& os, glm::mat4 const& mat);

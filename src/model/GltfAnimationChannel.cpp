@@ -19,7 +19,18 @@ static T getTransformForTime(std::vector<T> const& transforms, std::vector<float
 {
     if(transforms.empty())
     {
-        return glm::vec3();
+        if constexpr(targetPath == ETargetPath::SCALE)
+        {
+            return DEFAULT_SCALE;
+        }
+        if constexpr(targetPath == ETargetPath::TRANSLATION)
+        {
+            return DEFAULT_TRANSLATION;
+        }
+        if constexpr(targetPath == ETargetPath::ROTATION)
+        {
+            return DEFAULT_ROTATION;
+        }
     }
 
     if(time < timings.front())
@@ -73,13 +84,21 @@ static T getTransformForTime(std::vector<T> const& transforms, std::vector<float
 
         case EInterpolationType::LINEAR:
         {
-            float const interpolatedTime =
-                (time - timings[previousTimeIndex]) / (timings[nextTimeIndex] - timings[previousTimeIndex]);
+            float const previousTime     = timings[previousTimeIndex];
+            float const nextTime         = timings[nextTimeIndex];
+            float const interpolatedTime = (time - previousTime) / (nextTime - previousTime);
 
             T const previousTransform = transforms[previousTimeIndex];
             T const nextTransform     = transforms[nextTimeIndex];
 
-            finalTransform = previousTransform + interpolatedTime * (nextTransform - previousTransform);
+            if constexpr(targetPath == ETargetPath::ROTATION)
+            {
+                finalTransform = glm::slerp(previousTransform, nextTransform, interpolatedTime);
+            }
+            else
+            {
+                finalTransform = previousTransform + interpolatedTime * (nextTransform - previousTransform);
+            }
             break;
         }
 
