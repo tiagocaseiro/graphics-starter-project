@@ -31,5 +31,6 @@ struct OGLRenderData
     int rdMoveRight                  = 0;
     int rdMoveUp                     = 0;
     float rdTickDiff                 = 0.0;
+    int rdAnimationClipSize          = 0;
     glm::vec3 rdCameraWorldPosition  = glm::vec3(0.5f, 0.25f, 1.0f);
 };

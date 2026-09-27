@@ -3,17 +3,19 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include <algorithm>
+#include <chrono>
+
+#include <tiny_gltf.h>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/dual_quaternion.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 
-#include <tiny_gltf.h>
-
 #include "GltfNode.h"
 #include "Logger.h"
-
 #include "opengl/OGLRenderData.h"
+
+namespace chrono = std::chrono;
 
 static const std::string_view ATTRIBUTES[] = {"POSITION", "NORMAL", "TEXCOORD_0", "JOINTS_0", "WEIGHTS_0"};
 
@@ -102,7 +104,7 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
 
     mJointMatrices.resize(mInverseBindMatrices.size());
 
-    mRootNode = GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices);
+    mRootNode = GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices, mNodes);
 
     // mJointDualQuats.resize(skin.joints.size());
 
@@ -124,6 +126,14 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
     //         mJointDualQuats[i] = glm::mat2x4_cast(dq);
     //     }
     // }
+
+    for(const auto& anim : mModel->animations)
+    {
+        mAnimClips.push_back(GltfAnimationClip::make(*mModel, anim));
+    }
+
+    renderData.rdAnimationClipSize = mAnimClips.size();
+
     std::cout << *mRootNode << std::endl;
 }
 
@@ -255,4 +265,19 @@ int GltfModel::getTriangleCount() const
     const tinygltf::Primitive& primitives = mModel->meshes.front().primitives.front();
     const tinygltf::Accessor& accessor    = mModel->accessors[primitives.indices];
     return accessor.count;
+}
+
+void GltfModel::playAnimation(int animNum, float speedDivider)
+{
+    double const currentTime =
+        chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now().time_since_epoch()).count();
+
+    setAnimationFrame(animNum, std::fmod(currentTime / 1000.0 * speedDivider, mAnimClips[animNum].getClipEndTime()));
+}
+
+void GltfModel::setAnimationFrame(int animNum, float time)
+{
+    GltfAnimationClip& animClip = mAnimClips[animNum];
+    animClip.setAnimationFrame(mNodes, time);
+    mRootNode->calculateTreeMatrices();
 }

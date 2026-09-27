@@ -15,7 +15,7 @@ void printWhitespace(std::ostream& os, const int width)
 GltfNodeShared GltfNode::createNode(const GltfNodeShared parent, const int nodeNum, const tinygltf::Model& model,
                                     const std::vector<int>& nodeToJoint,
                                     const std::vector<glm::mat4>& inverseBindMatrices,
-                                    std::vector<glm::mat4>& jointMatrices)
+                                    std::vector<glm::mat4>& jointMatrices, std::vector<GltfNodeShared>& nodes)
 {
     if(nodeNum == -1)
     {
@@ -25,13 +25,15 @@ GltfNodeShared GltfNode::createNode(const GltfNodeShared parent, const int nodeN
     GltfNodeShared node =
         GltfNodeShared(new GltfNode(parent, nodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices));
 
+    nodes.push_back(node);
+
     std::vector<int> childrenNodes = model.nodes[nodeNum].children;
 
     node->mChildNodes.reserve(childrenNodes.size());
     for(const int childNodeNum : model.nodes[nodeNum].children)
     {
-        node->mChildNodes.push_back(
-            GltfNodeShared(createNode(node, childNodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices)));
+        node->mChildNodes.push_back(GltfNodeShared(
+            createNode(node, childNodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices, nodes)));
     }
 
     return node;
@@ -40,14 +42,14 @@ GltfNodeShared GltfNode::createNode(const GltfNodeShared parent, const int nodeN
 GltfNodeShared GltfNode::createNodeTree(const int nodeNum, const tinygltf::Model& model,
                                         const std::vector<int>& nodeToJoint,
                                         const std::vector<glm::mat4>& inverseBindMatrices,
-                                        std::vector<glm::mat4>& jointMatrices)
+                                        std::vector<glm::mat4>& jointMatrices, std::vector<GltfNodeShared>& nodes)
 {
     if(nodeNum == -1)
     {
         return nullptr;
     }
 
-    return createNode(nullptr, nodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices);
+    return createNode(nullptr, nodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices, nodes);
 }
 
 void GltfNode::calculateLocalTRSMatrix()
@@ -57,6 +59,16 @@ void GltfNode::calculateLocalTRSMatrix()
     glm::mat4 const tMatrix = glm::translate(glm::mat4(1.0f), mTranslation);
 
     mLocalTRSMatrix = tMatrix * rMatrix * sMatrix;
+}
+
+void GltfNode::calculateTreeMatrices(glm::mat4 const& parentMatrix)
+{
+    mNodeMatrix = parentMatrix * mLocalTRSMatrix;
+
+    for(GltfNodeShared child : mChildNodes)
+    {
+        child->calculateTreeMatrices(mNodeMatrix);
+    }
 }
 
 GltfNode::GltfNode(const GltfNodeShared parent, const int nodeNum, const tinygltf::Model& model,

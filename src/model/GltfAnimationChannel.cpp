@@ -186,6 +186,16 @@ glm::quat GltfAnimationChannel::getRotation(float time) const
     return getTransformForTime<ETargetPath::ROTATION>(mRotations, mTimings, mInterType, time);
 }
 
+float GltfAnimationChannel::getMaxTime() const
+{
+    if(mTimings.empty())
+    {
+        return 0.0f;
+    }
+
+    return mTimings.back();
+}
+
 GltfAnimationChannel::GltfAnimationChannel(int targetNode, const std::vector<float>& timings,
                                            EInterpolationType interType, const ETargetPath targetPath,
                                            const std::vector<glm::quat>& rotations,

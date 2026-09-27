@@ -5,7 +5,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <tiny_gltf.h>
 
+#include "GltfCommon.h"
 #include "tools/Macros.h"
+
+SHARED_ONLY(GltfAnimationChannel);
 
 enum class ETargetPath
 {
@@ -21,8 +24,6 @@ enum class EInterpolationType
     CUBICSPLINE
 };
 
-SHARED_ONLY(GltfAnimationChannel)
-
 class GltfAnimationChannel
 {
 public:
@@ -33,7 +34,7 @@ public:
     glm::vec3 getTranslation(float time) const;
     glm::vec3 getScaling(float time) const;
 
-    // float getMaxTime() const;
+    float getMaxTime() const;
 
 private:
     GltfAnimationChannel(int targetNode, const std::vector<float>& Timings, EInterpolationType interType,

@@ -12,12 +12,12 @@
 #include "GltfCommon.h"
 #include "tools/Macros.h"
 
+SHARED_ONLY(GltfNode);
+
 namespace tinygltf
 {
     class Model;
 }
-
-SHARED_ONLY(GltfNode);
 
 class GltfNode
 {
@@ -25,7 +25,7 @@ public:
     static GltfNodeShared createNodeTree(const int nodeNum, const tinygltf::Model& model,
                                          const std::vector<int>& nodeToJoint,
                                          const std::vector<glm::mat4>& inverseBindMatrices,
-                                         std::vector<glm::mat4>& mJointMatrices);
+                                         std::vector<glm::mat4>& mJointMatrices, std::vector<GltfNodeShared>& nodes);
     friend std::ostream& operator<<(std::ostream& os, const GltfNode& node);
 
     void setRotation(glm::quat const& rotation) { mRotation = rotation; }
@@ -34,11 +34,15 @@ public:
 
     void calculateLocalTRSMatrix();
 
+    void onAnimationFrame();
+
+    void calculateTreeMatrices(glm::mat4 const& parentMatrix = IDENTITY_TRANSFORM);
+
 private:
     static GltfNodeShared createNode(const std::shared_ptr<GltfNode> parent, const int nodeNum,
                                      const tinygltf::Model& model, const std::vector<int>& nodeToJoint,
                                      const std::vector<glm::mat4>& inverseBindMatrices,
-                                     std::vector<glm::mat4>& mJointMatrices);
+                                     std::vector<glm::mat4>& mJointMatrices, std::vector<GltfNodeShared>& nodes);
     GltfNode(const GltfNodeShared parent, const int nodeNum, const tinygltf::Model& model,
              const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
              std::vector<glm::mat4>& jointMatrices);

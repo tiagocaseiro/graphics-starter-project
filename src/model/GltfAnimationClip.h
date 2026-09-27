@@ -3,7 +3,6 @@
 #include <memory>
 
 #include <glm/gtc/type_ptr.hpp>
-#include <tiny_gltf.h>
 
 #include "GltfAnimationChannel.h"
 #include "GltfNode.h"
@@ -11,13 +10,17 @@
 class GltfAnimationClip
 {
 public:
-    void addChannel(const tinygltf::Model& model, const tinygltf::Animation& anim,
-                    const tinygltf::AnimationChannel& channel);
+    static GltfAnimationClip make(tinygltf::Model const& model, const tinygltf::Animation& animation);
+
+    float getClipEndTime() const;
+
     void setAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time);
 
+    void playAnimation(int animNum, float speedDivider);
+
 private:
-    GltfAnimationClip(const std::string& name);
+    GltfAnimationClip(std::string const& name, std::vector<GltfAnimationChannelShared> const& channels);
 
     const std::string mName;
-    std::vector<GltfAnimationChannelShared> mChannels;
+    const std::vector<GltfAnimationChannelShared> mChannels;
 };

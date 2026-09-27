@@ -6,18 +6,19 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "GltfAnimationClip.h"
+#include "GltfCommon.h"
 #include "opengl/Texture.h"
 #include "tools/Macros.h"
 
+SHARED_ONLY(GltfModel)
+
 class OGLRenderData;
-class GltfNode;
 
 namespace tinygltf
 {
     class Model;
 }
-
-SHARED_ONLY(GltfModel)
 
 class GltfModel
 {
@@ -30,6 +31,8 @@ public:
     void uploadVertexBuffers();
     void uploadIndexBuffer();
 
+    void playAnimation(int animNum, float speedDivider);
+
     const std::vector<glm::mat4>& getJointMatrices() const { return mJointMatrices; }
     // const std::vector<glm::mat2x4>& getJointDualQuats() const { return mJointDualQuats; }
 
@@ -37,13 +40,17 @@ private:
     GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
               OGLRenderData& renderData);
 
+    void setAnimationFrame(int animNum, float time);
+
     void createVertexBuffers();
     void createIndexBuffer();
 
     int getTriangleCount() const;
 
     std::shared_ptr<tinygltf::Model> mModel;
-    std::shared_ptr<GltfNode> mRootNode;
+    GltfNodeShared mRootNode;
+
+    std::vector<GltfNodeShared> mNodes;
 
     std::vector<int> mNodeToJoint;
 
@@ -54,7 +61,9 @@ private:
 
     std::vector<GLuint> mVertexVBO;
 
-    std::shared_ptr<Texture> mTex;
+    std::vector<GltfAnimationClip> mAnimClips;
+
+    TextureShared mTex;
 
     GLuint mVAO      = 0;
     GLuint mIndexVBO = 0;

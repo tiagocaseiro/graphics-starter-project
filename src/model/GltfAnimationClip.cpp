@@ -1,9 +1,22 @@
 #include "GltfAnimationClip.h"
 
-void GltfAnimationClip::addChannel(const tinygltf::Model& model, const tinygltf::Animation& anim,
-                                   const tinygltf::AnimationChannel& channel)
+#include <tiny_gltf.h>
+
+GltfAnimationClip GltfAnimationClip::make(tinygltf::Model const& model, const tinygltf::Animation& animation)
 {
-    mChannels.push_back(GltfAnimationChannel::make(model, anim, channel));
+    std::vector<GltfAnimationChannelShared> channels;
+    channels.reserve(animation.channels.size());
+    for(auto const& animationChannel : animation.channels)
+    {
+        channels.push_back(GltfAnimationChannel::make(model, animation, animationChannel));
+    }
+
+    return GltfAnimationClip(animation.name, channels);
+}
+
+GltfAnimationClip::GltfAnimationClip(std::string const& name, std::vector<GltfAnimationChannelShared> const& channels)
+    : mName(name), mChannels(channels)
+{
 }
 
 void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time)
@@ -61,4 +74,11 @@ void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nod
     }
 }
 
-GltfAnimationClip::GltfAnimationClip(const std::string& name) : mName(name) {}
+float GltfAnimationClip::getClipEndTime() const
+{
+    if(mChannels.empty())
+    {
+        return 0.0f;
+    }
+    return mChannels.front()->getMaxTime();
+}
