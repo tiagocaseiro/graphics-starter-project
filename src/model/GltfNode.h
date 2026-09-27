@@ -36,7 +36,8 @@ public:
 
     void onAnimationFrame();
 
-    void calculateTreeMatrices(glm::mat4 const& parentMatrix = IDENTITY_TRANSFORM);
+    void calculateTreeMatrices(const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
+                               glm::mat4 const& parentMatrix, std::vector<glm::mat4>& jointMatrices);
 
 private:
     static GltfNodeShared createNode(const std::shared_ptr<GltfNode> parent, const int nodeNum,

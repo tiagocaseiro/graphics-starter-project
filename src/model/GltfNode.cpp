@@ -25,7 +25,7 @@ GltfNodeShared GltfNode::createNode(const GltfNodeShared parent, const int nodeN
     GltfNodeShared node =
         GltfNodeShared(new GltfNode(parent, nodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices));
 
-    nodes.push_back(node);
+    nodes[nodeNum] = node;
 
     std::vector<int> childrenNodes = model.nodes[nodeNum].children;
 
@@ -61,13 +61,19 @@ void GltfNode::calculateLocalTRSMatrix()
     mLocalTRSMatrix = tMatrix * rMatrix * sMatrix;
 }
 
-void GltfNode::calculateTreeMatrices(glm::mat4 const& parentMatrix)
+void GltfNode::calculateTreeMatrices(const std::vector<int>& nodeToJoint,
+                                     const std::vector<glm::mat4>& inverseBindMatrices, glm::mat4 const& parentMatrix,
+                                     std::vector<glm::mat4>& jointMatrices)
 {
     mNodeMatrix = parentMatrix * mLocalTRSMatrix;
 
+    const int jointIndex = nodeToJoint[mNodeNum];
+
+    jointMatrices[jointIndex] = mNodeMatrix * inverseBindMatrices[jointIndex];
+
     for(GltfNodeShared child : mChildNodes)
     {
-        child->calculateTreeMatrices(mNodeMatrix);
+        child->calculateTreeMatrices(nodeToJoint, inverseBindMatrices, mNodeMatrix, jointMatrices);
     }
 }
 

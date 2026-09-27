@@ -104,6 +104,7 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
 
     mJointMatrices.resize(mInverseBindMatrices.size());
 
+    mNodes.resize(model->nodes.size());
     mRootNode = GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices, mNodes);
 
     // mJointDualQuats.resize(skin.joints.size());
@@ -285,7 +286,7 @@ std::string GltfModel::getClipName(int animNum) const
     return "Invalid";
 }
 
-int GltfModel::getClipEndTime(int animNum) const
+float GltfModel::getClipEndTime(int animNum) const
 {
     if(animNum < mAnimClips.size())
     {
@@ -299,5 +300,5 @@ void GltfModel::setAnimationFrame(int animNum, float time)
 {
     GltfAnimationClip& animClip = mAnimClips[animNum];
     animClip.setAnimationFrame(mNodes, time);
-    mRootNode->calculateTreeMatrices();
+    mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, IDENTITY_TRANSFORM, mJointMatrices);
 }

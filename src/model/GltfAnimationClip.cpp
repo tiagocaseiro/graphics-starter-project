@@ -46,17 +46,20 @@ void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nod
         {
             case ETargetPath::ROTATION:
             {
-                targetNode->setRotation(channel->getRotation(time));
+                glm::quat rotation = channel->getRotation(time);
+                targetNode->setRotation(rotation);
                 break;
             }
             case ETargetPath::TRANSLATION:
             {
-                targetNode->setTranslation(channel->getTranslation(time));
+                glm::vec3 translation = channel->getTranslation(time);
+                targetNode->setTranslation(translation);
                 break;
             }
             case ETargetPath::SCALE:
             {
-                targetNode->setScale(channel->getScaling(time));
+                glm::vec3 scale = channel->getScaling(time);
+                targetNode->setScale(scale);
                 break;
             }
 

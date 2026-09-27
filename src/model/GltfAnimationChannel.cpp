@@ -6,7 +6,7 @@ static std::vector<T> initializeTransformations(const tinygltf::Accessor& output
                                                 const tinygltf::Buffer& outputBuffer)
 {
     std::vector<T> result;
-    result.reserve(outputAccessor.count);
+    result.resize(outputAccessor.count);
 
     std::memcpy(result.data(), &outputBuffer.data.at(0) + outputBufferView.byteOffset, outputBufferView.byteLength);
 
@@ -76,10 +76,10 @@ static T getTransformForTime(std::vector<T> const& transforms, std::vector<float
             float const interpolatedTime =
                 (time - timings[previousTimeIndex]) / (timings[nextTimeIndex] - timings[previousTimeIndex]);
 
-            T const previousScale = transforms[previousTimeIndex];
-            T const nextScale     = transforms[nextTimeIndex];
+            T const previousTransform = transforms[previousTimeIndex];
+            T const nextTransform     = transforms[nextTimeIndex];
 
-            finalTransform = previousScale + interpolatedTime * (nextScale - previousScale);
+            finalTransform = previousTransform + interpolatedTime * (nextTransform - previousTransform);
             break;
         }
 

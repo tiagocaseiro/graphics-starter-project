@@ -34,7 +34,7 @@ public:
     void playAnimation(int animNum, float speedDivider);
 
     std::string getClipName(int animNum) const;
-    int getClipEndTime(int animNum) const;
+    float getClipEndTime(int animNum) const;
 
     const std::vector<glm::mat4>& getJointMatrices() const { return mJointMatrices; }
     // const std::vector<glm::mat2x4>& getJointDualQuats() const { return mJointDualQuats; }
