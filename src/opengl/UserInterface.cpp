@@ -23,7 +23,7 @@ UserInterface::~UserInterface()
     ImGui::DestroyContext();
 }
 
-void UserInterface::createFrame(const OGLRenderData& renderData)
+void UserInterface::createFrame(OGLRenderData& renderData)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -78,6 +78,45 @@ void UserInterface::createFrame(const OGLRenderData& renderData)
     ImGui::Text("%s %s %s", std::to_string(renderData.rdCameraWorldPosition.x).c_str(),
                 std::to_string(renderData.rdCameraWorldPosition.y).c_str(),
                 std::to_string(renderData.rdCameraWorldPosition.z).c_str());
+
+    if(ImGui::CollapsingHeader("gltf Animation", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::Text("Clip #");
+        ImGui::SameLine();
+        ImGui::SliderInt("##Clip", &renderData.rdAnimClip, 0, renderData.rdAnimationClipSize - 1);
+
+        ImGui::Text("Clip Name: %s", renderData.rdClipName.c_str());
+
+        ImGui::Checkbox("Play Animation", &renderData.rdPlayAnimation);
+
+        if(renderData.rdPlayAnimation == false)
+        {
+            ImGui::BeginDisabled();
+        }
+
+        ImGui::Text("Speed ");
+        ImGui::SameLine();
+        ImGui::SliderFloat("##ClipSpeed", &renderData.rdAnimSpeed, 0.0f, 2);
+
+        if(renderData.rdPlayAnimation == false)
+        {
+            ImGui::EndDisabled();
+        }
+
+        if(renderData.rdPlayAnimation)
+        {
+            ImGui::BeginDisabled();
+        }
+
+        ImGui::Text("Timepos");
+        ImGui::SameLine();
+        ImGui::SliderFloat("##ClipPos", &renderData.rdAnimTimePosition, 0.0f, renderData.rdAnimEndTime);
+
+        if(renderData.rdPlayAnimation)
+        {
+            ImGui::EndDisabled();
+        }
+    }
 
     ImGui::End();
 }

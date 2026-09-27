@@ -52,6 +52,7 @@ OGLRendererShared OGLRenderer::make(const int width, const int height, GLFWwindo
     }
 
     gltfModel->uploadIndexBuffer();
+    gltfModel->uploadIndexBuffer();
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
@@ -116,6 +117,17 @@ void OGLRenderer::draw()
     mGltfShader->use();
 
     mViewMatrix = mCamera.getViewMatrix(mRenderData) * model;
+
+    mRenderData.rdClipName = mGltfModel->getClipName(mRenderData.rdAnimClip);
+    if(mRenderData.rdPlayAnimation)
+    {
+        mGltfModel->playAnimation(mRenderData.rdAnimClip, mRenderData.rdAnimSpeed);
+    }
+    else
+    {
+        mRenderData.rdAnimEndTime = mGltfModel->getClipEndTime(mRenderData.rdAnimClip);
+        mGltfModel->setAnimationFrame(mRenderData.rdAnimClip, mRenderData.rdAnimTimePosition);
+    }
 
     if(mUniformBuffer)
     {

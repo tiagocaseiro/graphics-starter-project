@@ -55,12 +55,4 @@ private:
     int mMouseXPos      = 0;
     int mMouseYPos      = 0;
     float mLastTickTime = 0;
-
-    bool rdPlayAnimation     = true;
-    std::string rdClipName   = "None";
-    int rdAnimClip           = 0;
-    int rdAnimClipSize       = 0;
-    float rdAnimSpeed        = 1.0f;
-    float rdAnimTimePosition = 0.0f;
-    float rdAnimendtime      = 0.0f;
 };

@@ -7,7 +7,7 @@ class UserInterface
 public:
     UserInterface(const OGLRenderData& renderData);
     ~UserInterface();
-    void createFrame(const OGLRenderData& renderData);
+    void createFrame(OGLRenderData& renderData);
     void render();
 
 private:

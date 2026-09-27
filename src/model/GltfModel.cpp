@@ -275,6 +275,26 @@ void GltfModel::playAnimation(int animNum, float speedDivider)
     setAnimationFrame(animNum, std::fmod(currentTime / 1000.0 * speedDivider, mAnimClips[animNum].getClipEndTime()));
 }
 
+std::string GltfModel::getClipName(int animNum) const
+{
+    if(animNum < mAnimClips.size())
+    {
+        return mAnimClips[animNum].mName;
+    }
+
+    return "Invalid";
+}
+
+int GltfModel::getClipEndTime(int animNum) const
+{
+    if(animNum < mAnimClips.size())
+    {
+        return mAnimClips[animNum].getClipEndTime();
+    }
+
+    return 0.0f;
+}
+
 void GltfModel::setAnimationFrame(int animNum, float time)
 {
     GltfAnimationClip& animClip = mAnimClips[animNum];

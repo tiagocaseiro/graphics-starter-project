@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <glm/glm.hpp>
 
 struct GLFWwindow;
@@ -32,5 +34,14 @@ struct OGLRenderData
     int rdMoveUp                     = 0;
     float rdTickDiff                 = 0.0;
     int rdAnimationClipSize          = 0;
-    glm::vec3 rdCameraWorldPosition  = glm::vec3(0.5f, 0.25f, 1.0f);
+
+    bool rdPlayAnimation     = true;
+    std::string rdClipName   = "None";
+    int rdAnimClip           = 0;
+    int rdAnimClipSize       = 0;
+    float rdAnimSpeed        = 1.0f;
+    float rdAnimTimePosition = 0.0f;
+    float rdAnimEndTime      = 0.0f;
+
+    glm::vec3 rdCameraWorldPosition = glm::vec3(1.5f, 4.0f, 4.5f);
 };

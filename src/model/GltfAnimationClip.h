@@ -21,6 +21,8 @@ public:
 private:
     GltfAnimationClip(std::string const& name, std::vector<GltfAnimationChannelShared> const& channels);
 
-    const std::string mName;
     const std::vector<GltfAnimationChannelShared> mChannels;
+
+public:
+    const std::string mName;
 };

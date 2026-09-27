@@ -33,14 +33,17 @@ public:
 
     void playAnimation(int animNum, float speedDivider);
 
+    std::string getClipName(int animNum) const;
+    int getClipEndTime(int animNum) const;
+
     const std::vector<glm::mat4>& getJointMatrices() const { return mJointMatrices; }
     // const std::vector<glm::mat2x4>& getJointDualQuats() const { return mJointDualQuats; }
+
+    void setAnimationFrame(int animNum, float time);
 
 private:
     GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
               OGLRenderData& renderData);
-
-    void setAnimationFrame(int animNum, float time);
 
     void createVertexBuffers();
     void createIndexBuffer();
