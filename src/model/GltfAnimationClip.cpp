@@ -72,7 +72,7 @@ void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nod
     {
         if(node)
         {
-            node->calculateLocalTRSMatrix();
+            node->calculateLocalTransform();
         }
     }
 }
