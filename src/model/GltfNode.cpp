@@ -1,5 +1,7 @@
 #include "GltfNode.h"
 
+#include <algorithm>
+
 #include <glm/gtc/type_ptr.hpp>
 
 #include <tiny_gltf.h>
@@ -52,11 +54,26 @@ GltfNodeShared GltfNode::createNodeTree(const int nodeNum, const tinygltf::Model
     return createNode(nullptr, nodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices, nodes);
 }
 
-void GltfNode::blendRotation(glm::quat const& rotation, float blendFactor) {}
+void GltfNode::blendRotation(glm::quat const& rotation, float blendFactor)
+{
+    float const factor = std::clamp(blendFactor, 0.0f, 1.0f);
 
-void GltfNode::blendTranslation(glm::vec3 const& translation, float blendFactor) {}
+    mBlendRotation = glm::normalize(glm::slerp(mRotation, rotation, factor));
+}
 
-void GltfNode::blendScale(glm::vec3 const& scale, float blendFactor) {}
+void GltfNode::blendTranslation(glm::vec3 const& translation, float blendFactor)
+{
+    float const factor = std::clamp(blendFactor, 0.0f, 1.0f);
+
+    mBlendTranslation = translation * factor + mTranslation * (1.0f - factor);
+}
+
+void GltfNode::blendScale(glm::vec3 const& scale, float blendFactor)
+{
+    float const factor = std::clamp(blendFactor, 0.0f, 1.0f);
+
+    mBlendScale = scale * factor + mScale * (1.0f - factor);
+}
 
 void GltfNode::setRotation(glm::quat const& rotation)
 {
@@ -78,9 +95,9 @@ void GltfNode::setScale(glm::vec3 const& scale)
 
 void GltfNode::calculateLocalTransform()
 {
-    glm::mat4 const sMatrix = glm::scale(glm::mat4(1.0f), mScale);
-    glm::mat4 const rMatrix = glm::mat4_cast(mRotation);
-    glm::mat4 const tMatrix = glm::translate(glm::mat4(1.0f), mTranslation);
+    glm::mat4 const sMatrix = glm::scale(glm::mat4(1.0f), mBlendScale);
+    glm::mat4 const rMatrix = glm::mat4_cast(mBlendRotation);
+    glm::mat4 const tMatrix = glm::translate(glm::mat4(1.0f), mBlendTranslation);
 
     mLocalTransform = tMatrix * rMatrix * sMatrix;
 }
@@ -113,17 +130,17 @@ GltfNode::GltfNode(const GltfNodeShared parent, const int nodeNum, const tinyglt
 
     if(node.scale.empty() == false)
     {
-        mScale = glm::make_vec3(node.scale.data());
+        setScale(glm::make_vec3(node.scale.data()));
     }
 
     if(node.rotation.empty() == false)
     {
-        mRotation = glm::make_quat(node.rotation.data());
+        setRotation(glm::make_quat(node.rotation.data()));
     }
 
     if(node.translation.empty() == false)
     {
-        mTranslation = glm::make_vec3(node.translation.data());
+        setTranslation(glm::make_vec3(node.translation.data()));
     }
 
     calculateLocalTransform();
