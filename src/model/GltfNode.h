@@ -30,13 +30,15 @@ public:
                                          std::vector<glm::mat4>& mJointMatrices, std::vector<GltfNodeShared>& nodes);
     friend std::ostream& operator<<(std::ostream& os, const GltfNode& node);
 
-    void setRotation(glm::quat const& rotation) { mRotation = rotation; }
-    void setTranslation(glm::vec3 const& translation) { mTranslation = translation; }
-    void setScale(glm::vec3 const& scale) { mScale = scale; }
+    void blendRotation(glm::quat const& rotation, float blendFactor);
+    void blendTranslation(glm::vec3 const& translation, float blendFactor);
+    void blendScale(glm::vec3 const& scale, float blendFactor);
 
-    void calculateLocalTRSMatrix();
+    void setRotation(glm::quat const& rotation);
+    void setTranslation(glm::vec3 const& translation);
+    void setScale(glm::vec3 const& scale);
 
-    void onAnimationFrame();
+    void calculateLocalTransform();
 
     void calculateTreeMatrices(const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
                                glm::mat4 const& parentMatrix, std::vector<glm::mat4>& jointMatrices);
@@ -57,11 +59,15 @@ private:
 
     const int mNodeNum;
 
+    glm::vec3 mBlendScale       = DEFAULT_SCALE;
+    glm::vec3 mBlendTranslation = DEFAULT_TRANSLATION;
+    glm::quat mBlendRotation    = DEFAULT_ROTATION;
+
     glm::vec3 mScale       = DEFAULT_SCALE;
     glm::vec3 mTranslation = DEFAULT_TRANSLATION;
     glm::quat mRotation    = DEFAULT_ROTATION;
 
-    glm::mat4 mLocalTRSMatrix = glm::mat4(1.0f);
+    glm::mat4 mLocalTransform = glm::mat4(1.0f);
     glm::mat4 mNodeMatrix     = glm::mat4(1.0f);
 };
 
