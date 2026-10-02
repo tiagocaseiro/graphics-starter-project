@@ -19,7 +19,7 @@ GltfAnimationClip::GltfAnimationClip(std::string const& name, std::vector<GltfAn
 {
 }
 
-void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time)
+void GltfAnimationClip::blendAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time, float blendFactor)
 {
     for(GltfAnimationChannelShared const& channel : mChannels)
     {
@@ -47,19 +47,19 @@ void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nod
             case ETargetPath::ROTATION:
             {
                 glm::quat rotation = channel->getRotation(time);
-                targetNode->setRotation(rotation);
+                targetNode->blendRotation(rotation, blendFactor);
                 break;
             }
             case ETargetPath::TRANSLATION:
             {
                 glm::vec3 translation = channel->getTranslation(time);
-                targetNode->setTranslation(translation);
+                targetNode->blendTranslation(translation, blendFactor);
                 break;
             }
             case ETargetPath::SCALE:
             {
                 glm::vec3 scale = channel->getScaling(time);
-                targetNode->setScale(scale);
+                targetNode->blendScale(scale, blendFactor);
                 break;
             }
 

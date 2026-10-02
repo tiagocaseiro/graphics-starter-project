@@ -268,12 +268,14 @@ int GltfModel::getTriangleCount() const
     return accessor.count;
 }
 
-void GltfModel::playAnimation(int animNum, float speedDivider)
+void GltfModel::playAnimation(int animNum, float speedDivider, float blendFactor)
 {
-    double const currentTime =
-        chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now().time_since_epoch()).count();
+    chrono::steady_clock::duration const now = chrono::steady_clock::now().time_since_epoch();
 
-    setAnimationFrame(animNum, std::fmod(currentTime / 1000.0 * speedDivider, mAnimClips[animNum].getClipEndTime()));
+    double const currentTime = chrono::duration_cast<chrono::milliseconds>(now).count();
+
+    blendAnimationFrame(animNum, std::fmod(currentTime / 1000.0 * speedDivider, mAnimClips[animNum].getClipEndTime()),
+                        blendFactor);
 }
 
 std::string GltfModel::getClipName(int animNum) const
@@ -296,9 +298,9 @@ float GltfModel::getClipEndTime(int animNum) const
     return 0.0f;
 }
 
-void GltfModel::setAnimationFrame(int animNum, float time)
+void GltfModel::blendAnimationFrame(int animNum, float time, float blendFactor)
 {
     GltfAnimationClip& animClip = mAnimClips[animNum];
-    animClip.setAnimationFrame(mNodes, time);
+    animClip.blendAnimationFrame(mNodes, time, blendFactor);
     mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, IDENTITY_TRANSFORM, mJointMatrices);
 }

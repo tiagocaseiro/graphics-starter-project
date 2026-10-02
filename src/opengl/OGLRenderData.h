@@ -42,6 +42,7 @@ struct OGLRenderData
     float rdAnimSpeed        = 1.0f;
     float rdAnimTimePosition = 0.0f;
     float rdAnimEndTime      = 0.0f;
+    float rdAnimBlendFactor  = 1.0f;
 
     glm::vec3 rdCameraWorldPosition = glm::vec3(1.5f, 4.0f, 4.5f);
 };

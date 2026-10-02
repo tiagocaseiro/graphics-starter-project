@@ -116,6 +116,10 @@ void UserInterface::createFrame(OGLRenderData& renderData)
         {
             ImGui::EndDisabled();
         }
+
+        ImGui::Text("Blend Factor");
+        ImGui::SameLine();
+        ImGui::SliderFloat("##BlendFactor", &renderData.rdAnimBlendFactor, 0.0f, 1.0);
     }
 
     ImGui::End();
