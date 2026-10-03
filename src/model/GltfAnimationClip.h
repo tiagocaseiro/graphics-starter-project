@@ -14,9 +14,11 @@ public:
 
     float getClipEndTime() const;
 
-    void blendAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time, float blendFactor);
+    void setAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time) const;
 
-    void playAnimation(int animNum, float speedDivider);
+    void blendAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time, float blendFactor) const;
+
+    void playAnimation(int animNum, float speedDivider) const;
 
 private:
     GltfAnimationClip(std::string const& name, std::vector<GltfAnimationChannelShared> const& channels);

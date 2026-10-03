@@ -34,6 +34,7 @@ public:
     void uploadIndexBuffer();
 
     void playAnimation(int animNum, float speedDivider, float blendFactor);
+    void playAnimation(int sourceAnimNum, int destAnimNum, float speedDivider, float blendFactor);
 
     std::string getClipName(int animNum) const;
     float getClipEndTime(int animNum) const;
@@ -42,6 +43,9 @@ public:
     // const std::vector<glm::mat2x4>& getJointDualQuats() const { return mJointDualQuats; }
 
     void blendAnimationFrame(int animNum, float time, float blendFactor);
+    void crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, float time, float blendFactor);
+
+    void initializeNodes();
 
 private:
     GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,

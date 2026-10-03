@@ -19,7 +19,66 @@ GltfAnimationClip::GltfAnimationClip(std::string const& name, std::vector<GltfAn
 {
 }
 
-void GltfAnimationClip::blendAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time, float blendFactor)
+void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time) const
+{
+    for(GltfAnimationChannelShared const& channel : mChannels)
+    {
+        if(channel == nullptr)
+        {
+            continue;
+        }
+
+        int const targetNodeIndex = channel->mTargetNode;
+
+        if(targetNodeIndex >= nodes.size())
+        {
+            continue;
+        }
+
+        GltfNodeShared targetNode = nodes[targetNodeIndex];
+
+        if(targetNode == nullptr)
+        {
+            continue;
+        }
+
+        switch(channel->mTargetPath)
+        {
+            case ETargetPath::ROTATION:
+            {
+                glm::quat rotation = channel->getRotation(time);
+                targetNode->setRotation(rotation);
+                break;
+            }
+            case ETargetPath::TRANSLATION:
+            {
+                glm::vec3 translation = channel->getTranslation(time);
+                targetNode->setTranslation(translation);
+                break;
+            }
+            case ETargetPath::SCALE:
+            {
+                glm::vec3 scale = channel->getScaling(time);
+                targetNode->setScale(scale);
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
+    for(GltfNodeShared const& node : nodes)
+    {
+        if(node)
+        {
+            node->calculateLocalTransform();
+        }
+    }
+}
+
+void GltfAnimationClip::blendAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time,
+                                            float blendFactor) const
 {
     for(GltfAnimationChannelShared const& channel : mChannels)
     {

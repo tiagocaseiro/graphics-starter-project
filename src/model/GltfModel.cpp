@@ -91,8 +91,6 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
         initializeFromBuffer(*mModel, inverseBindMatricesIndex, mInverseBindMatrices);
     }
 
-    int rootNode = nodes.at(0);
-
     mNodeToJoint.resize(mModel->nodes.size());
 
     const std::vector<int>& joints = skin.joints;
@@ -104,8 +102,7 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
 
     mJointMatrices.resize(mInverseBindMatrices.size());
 
-    mNodes.resize(model->nodes.size());
-    mRootNode = GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices, mNodes);
+    initializeNodes();
 
     // mJointDualQuats.resize(skin.joints.size());
 
@@ -134,8 +131,6 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
     }
 
     renderData.rdAnimationClipSize = mAnimClips.size();
-
-    std::cout << *mRootNode << std::endl;
 }
 
 void GltfModel::draw()
@@ -278,6 +273,17 @@ void GltfModel::playAnimation(int animNum, float speedDivider, float blendFactor
                         blendFactor);
 }
 
+void GltfModel::playAnimation(int sourceAnimNum, int destAnimNum, float speedDivider, float blendFactor)
+{
+    chrono::steady_clock::duration const now = chrono::steady_clock::now().time_since_epoch();
+
+    double const currentTime = chrono::duration_cast<chrono::milliseconds>(now).count();
+
+    crossBlendAnimationFrame(sourceAnimNum, destAnimNum,
+                             std::fmod(currentTime / 1000.0 * speedDivider, mAnimClips[sourceAnimNum].getClipEndTime()),
+                             blendFactor);
+}
+
 std::string GltfModel::getClipName(int animNum) const
 {
     if(animNum < mAnimClips.size())
@@ -303,4 +309,35 @@ void GltfModel::blendAnimationFrame(int animNum, float time, float blendFactor)
     GltfAnimationClip& animClip = mAnimClips[animNum];
     animClip.blendAnimationFrame(mNodes, time, blendFactor);
     mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, IDENTITY_TRANSFORM, mJointMatrices);
+}
+
+void GltfModel::crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, float time, float blendFactor)
+{
+    GltfAnimationClip const& sourceAnimClip = mAnimClips[sourceAnimNum];
+    GltfAnimationClip const& destAnimClip   = mAnimClips[destAnimNum];
+
+    float const sourceAnimDuration = sourceAnimClip.getClipEndTime();
+    float const destAnimDuration   = destAnimClip.getClipEndTime();
+
+    float const scaledTime = sourceAnimDuration / destAnimDuration;
+
+    sourceAnimClip.setAnimationFrame(mNodes, time);
+    destAnimClip.blendAnimationFrame(mNodes, scaledTime, blendFactor);
+
+    mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, IDENTITY_TRANSFORM, mJointMatrices);
+}
+
+void GltfModel::initializeNodes()
+{
+    if(mModel)
+    {
+        std::vector<int> const& nodes = mModel->scenes[0].nodes;
+
+        int const rootNode = nodes.at(0);
+
+        mNodes.resize(mModel->nodes.size());
+        mRootNode =
+            GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices, mNodes);
+        std::cout << *mRootNode << std::endl;
+    }
 }

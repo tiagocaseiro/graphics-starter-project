@@ -28,6 +28,10 @@ public:
                                          const std::vector<int>& nodeToJoint,
                                          const std::vector<glm::mat4>& inverseBindMatrices,
                                          std::vector<glm::mat4>& mJointMatrices, std::vector<GltfNodeShared>& nodes);
+    static void resetNodeTree(const int nodeNum, const tinygltf::Model& model, const std::vector<int>& nodeToJoint,
+                              const std::vector<glm::mat4>& inverseBindMatrices, std::vector<glm::mat4>& mJointMatrices,
+                              std::vector<GltfNodeShared>& nodes);
+
     friend std::ostream& operator<<(std::ostream& os, const GltfNode& node);
 
     void blendRotation(glm::quat const& rotation, float blendFactor);
