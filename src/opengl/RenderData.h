@@ -35,14 +35,18 @@ struct OGLRenderData
     float rdTickDiff                 = 0.0;
     int rdAnimationClipSize          = 0;
 
-    bool rdPlayAnimation     = true;
-    std::string rdClipName   = "None";
-    int rdAnimClip           = 0;
-    int rdAnimClipSize       = 0;
-    float rdAnimSpeed        = 1.0f;
-    float rdAnimTimePosition = 0.0f;
-    float rdAnimEndTime      = 0.0f;
-    float rdAnimBlendFactor  = 1.0f;
+    bool rdPlayAnimation                 = true;
+    std::string rdClipName               = "None";
+    int rdAnimClip                       = 0;
+    int rdAnimClipSize                   = 0;
+    float rdAnimSpeed                    = 1.0f;
+    float rdAnimTimePosition             = 0.0f;
+    float rdAnimEndTime                  = 0.0f;
+    float rdAnimBlendFactor              = 1.0f;
+    bool rdCrossBlending                 = false;
+    int rdCrossBlendDestAnimClip         = 0;
+    std::string rdCrossBlendDestAnimName = "None";
+    float rdAnimCrossBlendFactor         = 1.0f;
 
     glm::vec3 rdCameraWorldPosition = glm::vec3(1.5f, 4.0f, 4.5f);
 };

@@ -5,7 +5,7 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
-#include "OGLRenderData.h"
+#include "RenderData.h"
 
 UserInterface::UserInterface(const OGLRenderData& renderData)
 {

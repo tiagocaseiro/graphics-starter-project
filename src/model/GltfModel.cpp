@@ -13,7 +13,7 @@
 
 #include "GltfNode.h"
 #include "Logger.h"
-#include "opengl/OGLRenderData.h"
+#include "opengl/RenderData.h"
 
 namespace chrono = std::chrono;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OGLRenderData.h"
+#include "RenderData.h"
 
 class UserInterface
 {

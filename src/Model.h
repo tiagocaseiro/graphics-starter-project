@@ -1,6 +1,6 @@
 #pragma once
 
-#include "opengl/OGLRenderData.h"
+#include "opengl/RenderData.h"
 
 class Model
 {

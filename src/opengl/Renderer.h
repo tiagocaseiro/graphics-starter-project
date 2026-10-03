@@ -1,7 +1,7 @@
 #pragma once
 
 #include "FrameBuffer.h"
-#include "OGLRenderData.h"
+#include "RenderData.h"
 #include "ShaderStorageBuffer.h"
 #include "UserInterface.h"
 #include "VertexBuffer.h"
@@ -14,14 +14,14 @@ class GltfModel;
 class UniformBuffer;
 class Shader;
 
-SHARED_ONLY(OGLRenderer)
+SHARED_ONLY(Renderer)
 
-class OGLRenderer
+class Renderer
 {
 public:
-    static OGLRendererShared make(const int width, const int height, GLFWwindow* window);
+    static RendererShared make(const int width, const int height, GLFWwindow* window);
 
-    ~OGLRenderer();
+    ~Renderer();
 
     void setSize(const int width, const int height);
     void uploadData(const OGLMesh& vertexData);
@@ -32,8 +32,8 @@ public:
     void handleMovementKeys();
 
 private:
-    OGLRenderer(const std::shared_ptr<Shader>& mGltfShader, const Framebuffer& mFramebuffer,
-                const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& mRenderData);
+    Renderer(const std::shared_ptr<Shader>& mGltfShader, const Framebuffer& mFramebuffer,
+             const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& mRenderData);
 
     std::shared_ptr<Shader> mGltfShader;
     Framebuffer mFramebuffer;

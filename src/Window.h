@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Model.h"
-#include "opengl/OGLRenderer.h"
+#include "opengl/Renderer.h"
 
 struct GLFWwindow;
 
@@ -17,7 +17,7 @@ public:
     void mainLoop();
     void cleanup();
 
-    const OGLRendererShared& getRenderer() { return mRenderer; }
+    const RendererShared& getRenderer() { return mRenderer; }
 
 private:
     void handleWindowCloseEvents();
@@ -25,6 +25,6 @@ private:
 
     GLFWwindow* mWindow = nullptr;
 
-    OGLRendererShared mRenderer;
+    RendererShared mRenderer;
     std::unique_ptr<Model> mModel;
 };

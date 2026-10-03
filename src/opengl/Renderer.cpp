@@ -1,4 +1,4 @@
-#include "OGLRenderer.h"
+#include "Renderer.h"
 
 #include <algorithm>
 #include <iostream>
@@ -16,7 +16,7 @@
 #include "UniformBuffer.h"
 #include "model/GltfModel.h"
 
-OGLRendererShared OGLRenderer::make(const int width, const int height, GLFWwindow* window)
+RendererShared Renderer::make(const int width, const int height, GLFWwindow* window)
 {
     if(gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == false || GLAD_GL_VERSION_4_6 == false)
     {
@@ -57,11 +57,11 @@ OGLRendererShared OGLRenderer::make(const int width, const int height, GLFWwindo
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
 
-    return OGLRendererShared(new OGLRenderer(gltfShader, framebuffer, gltfModel, renderData));
+    return RendererShared(new Renderer(gltfShader, framebuffer, gltfModel, renderData));
 }
 
-OGLRenderer::OGLRenderer(const std::shared_ptr<Shader>& gltfShader, const Framebuffer& framebuffer,
-                         const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& renderData)
+Renderer::Renderer(const std::shared_ptr<Shader>& gltfShader, const Framebuffer& framebuffer,
+                   const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& renderData)
     : mGltfShader(gltfShader),
       mFramebuffer(framebuffer),
       mGltfModel(gltfModel),
@@ -74,7 +74,7 @@ OGLRenderer::OGLRenderer(const std::shared_ptr<Shader>& gltfShader, const Frameb
 {
 }
 
-void OGLRenderer::setSize(const int width, const int height)
+void Renderer::setSize(const int width, const int height)
 {
     mRenderData.rdWidth  = width;
     mRenderData.rdHeight = height;
@@ -83,15 +83,15 @@ void OGLRenderer::setSize(const int width, const int height)
     glViewport(0, 0, width, height);
 }
 
-OGLRenderer::~OGLRenderer() { mFramebuffer.cleanup(); }
+Renderer::~Renderer() { mFramebuffer.cleanup(); }
 
-void OGLRenderer::uploadData(const OGLMesh& vertexData)
+void Renderer::uploadData(const OGLMesh& vertexData)
 {
     mRenderData.rdTriangleCount = vertexData.vertices.size();
     mVertexBuffer.uploadData(vertexData);
 }
 
-void OGLRenderer::draw()
+void Renderer::draw()
 {
     static float previousFrameStartTime = 0.0;
 
@@ -161,9 +161,9 @@ void OGLRenderer::draw()
     mLastTickTime = glfwGetTime();
 }
 
-void OGLRenderer::handleKeyEvents(const int key, const int scancode, const int action, const int mods) {}
+void Renderer::handleKeyEvents(const int key, const int scancode, const int action, const int mods) {}
 
-void OGLRenderer::handleMouseButtonEvents(const int button, const int action, const int mods)
+void Renderer::handleMouseButtonEvents(const int button, const int action, const int mods)
 {
     ImGuiIO& io = ImGui::GetIO();
     if(button >= 0 && button < ImGuiMouseButton_COUNT)
@@ -198,7 +198,7 @@ void OGLRenderer::handleMouseButtonEvents(const int button, const int action, co
     }
 }
 
-void OGLRenderer::handleMousePositionEvents(double xPos, double yPos)
+void Renderer::handleMousePositionEvents(double xPos, double yPos)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -243,7 +243,7 @@ void OGLRenderer::handleMousePositionEvents(double xPos, double yPos)
     mMouseYPos = static_cast<int>(yPos);
 }
 
-void OGLRenderer::handleMovementKeys()
+void Renderer::handleMovementKeys()
 {
     mRenderData.rdMoveForward = 0;
     if(glfwGetKey(mRenderData.rdWindow, GLFW_KEY_W) == GLFW_PRESS)

@@ -36,7 +36,7 @@ bool Window::init(const int width, const int height, const std::string& title)
         thisWindow->handleWindowCloseEvents();
     });
 
-    mRenderer = OGLRenderer::make(width, height, mWindow);
+    mRenderer = Renderer::make(width, height, mWindow);
 
     if(mRenderer == nullptr)
     {
