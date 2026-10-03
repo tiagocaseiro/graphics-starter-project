@@ -319,10 +319,10 @@ void GltfModel::crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, flo
     float const sourceAnimDuration = sourceAnimClip.getClipEndTime();
     float const destAnimDuration   = destAnimClip.getClipEndTime();
 
-    float const scaledTime = sourceAnimDuration / destAnimDuration;
+    float const scaledDestTime = time * (destAnimDuration / sourceAnimDuration);
 
     sourceAnimClip.setAnimationFrame(mNodes, time);
-    destAnimClip.blendAnimationFrame(mNodes, scaledTime, blendFactor);
+    destAnimClip.blendAnimationFrame(mNodes, scaledDestTime, blendFactor);
 
     mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, IDENTITY_TRANSFORM, mJointMatrices);
 }
