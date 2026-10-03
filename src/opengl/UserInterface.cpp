@@ -12,7 +12,7 @@ UserInterface::UserInterface(const OGLRenderData& renderData)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(renderData.rdWindow, true);
-    static constexpr auto glslVersion = "#version 460 core";
+    static constexpr char const* glslVersion = "#version 460 core";
     ImGui_ImplOpenGL3_Init(glslVersion);
 }
 
@@ -116,10 +116,54 @@ void UserInterface::createFrame(OGLRenderData& renderData)
         {
             ImGui::EndDisabled();
         }
+    }
+
+    if(ImGui::CollapsingHeader("gltf Blending", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+
+        ImGui::Checkbox("Blending Type: ", &renderData.rdCrossBlending);
+        ImGui::SameLine();
+        if(renderData.rdCrossBlending)
+        {
+            ImGui::Text("Cross");
+        }
+        else
+        {
+            ImGui::Text("Single");
+        }
+
+        if(renderData.rdCrossBlending)
+        {
+            ImGui::BeginDisabled();
+        }
 
         ImGui::Text("Blend Factor");
         ImGui::SameLine();
         ImGui::SliderFloat("##BlendFactor", &renderData.rdAnimBlendFactor, 0.0f, 1.0);
+
+        if(renderData.rdCrossBlending)
+        {
+            ImGui::EndDisabled();
+        }
+
+        if(renderData.rdCrossBlending == false)
+        {
+            ImGui::BeginDisabled();
+        }
+
+        ImGui::Text("DestClip #");
+        ImGui::SameLine();
+        ImGui::SliderInt("##DestClip", &renderData.rdCrossBlendDestAnimClip, 0, renderData.rdAnimationClipSize - 1);
+        ImGui::Text("Dest Clip Name: %s", renderData.rdCrossBlendDestAnimName.c_str());
+
+        ImGui::Text("Cross Blend Factor");
+        ImGui::SameLine();
+        ImGui::SliderFloat("##CrossBlendFactor", &renderData.rdAnimCrossBlendFactor, 0.0f, 1.0);
+
+        if(renderData.rdCrossBlending == false)
+        {
+            ImGui::EndDisabled();
+        }
     }
 
     ImGui::End();

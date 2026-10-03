@@ -135,8 +135,8 @@ void Renderer::draw()
     {
         if(mRenderData.rdCrossBlending)
         {
-            mGltfModel->crossBlendAnimationFrame(mRenderData.rdAnimClip, mRenderData.rdCrossBlendDestAnimClip,
-                                                 mRenderData.rdAnimSpeed, mRenderData.rdAnimCrossBlendFactor);
+            mGltfModel->playAnimation(mRenderData.rdAnimClip, mRenderData.rdCrossBlendDestAnimClip,
+                                      mRenderData.rdAnimSpeed, mRenderData.rdAnimCrossBlendFactor);
         }
         else
         {
