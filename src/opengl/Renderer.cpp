@@ -74,13 +74,16 @@ Renderer::Renderer(const std::shared_ptr<Shader>& gltfShader, const Framebuffer&
 {
 }
 
-void Renderer::setSize(const int width, const int height)
+void Renderer::setSize(int const width, int const height)
 {
-    mRenderData.rdWidth  = width;
-    mRenderData.rdHeight = height;
+    if(width != 0 && height != 0)
+    {
+        mRenderData.rdWidth  = width;
+        mRenderData.rdHeight = height;
 
-    mFramebuffer.resize(width, height);
-    glViewport(0, 0, width, height);
+        mFramebuffer.resize(width, height);
+        glViewport(0, 0, width, height);
+    }
 }
 
 Renderer::~Renderer() { mFramebuffer.cleanup(); }
@@ -118,11 +121,29 @@ void Renderer::draw()
 
     mViewMatrix = mCamera.getViewMatrix(mRenderData) * model;
 
-    mRenderData.rdClipName = mGltfModel->getClipName(mRenderData.rdAnimClip);
+    mRenderData.rdClipName               = mGltfModel->getClipName(mRenderData.rdAnimClip);
+    mRenderData.rdCrossBlendDestAnimName = mGltfModel->getClipName(mRenderData.rdCrossBlendDestAnimClip);
+
+    static bool blendingChanged = mRenderData.rdCrossBlending;
+
+    if(blendingChanged != mRenderData.rdCrossBlending)
+    {
+        blendingChanged = mRenderData.rdCrossBlending;
+        mGltfModel->initializeNodes();
+    }
     if(mRenderData.rdPlayAnimation)
     {
-        mGltfModel->playAnimation(mRenderData.rdAnimClip, mRenderData.rdAnimSpeed, mRenderData.rdAnimBlendFactor);
+        if(mRenderData.rdCrossBlending)
+        {
+            mGltfModel->crossBlendAnimationFrame(mRenderData.rdAnimClip, mRenderData.rdCrossBlendDestAnimClip,
+                                                 mRenderData.rdAnimSpeed, mRenderData.rdAnimCrossBlendFactor);
+        }
+        else
+        {
+            mGltfModel->playAnimation(mRenderData.rdAnimClip, mRenderData.rdAnimSpeed, mRenderData.rdAnimBlendFactor);
+        }
     }
+
     else
     {
         mRenderData.rdAnimEndTime = mGltfModel->getClipEndTime(mRenderData.rdAnimClip);

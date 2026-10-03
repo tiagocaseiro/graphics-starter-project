@@ -23,7 +23,7 @@ public:
 
     ~Renderer();
 
-    void setSize(const int width, const int height);
+    void setSize(int const width, int const height);
     void uploadData(const OGLMesh& vertexData);
     void draw();
     void handleKeyEvents(const int key, const int scancode, const int action, const int mods);
