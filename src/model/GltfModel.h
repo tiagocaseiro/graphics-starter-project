@@ -45,7 +45,7 @@ public:
     void blendAnimationFrame(int animNum, float time, float blendFactor);
     void crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, float time, float blendFactor);
 
-    void initializeNodes();
+    void initializeNodes(OGLRenderData& renderData);
 
 private:
     GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
@@ -71,6 +71,9 @@ private:
     std::vector<GLuint> mVertexVBO;
 
     std::vector<GltfAnimationClip> mAnimClips;
+
+    std::vector<bool> mAdditiveAnimationMask;
+    std::vector<bool> mInvertedAdditiveAnimationMask;
 
     TextureShared mTex;
 

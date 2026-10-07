@@ -132,7 +132,7 @@ void Renderer::draw()
     if(blendingChanged != mRenderData.rdCrossBlending)
     {
         blendingChanged = mRenderData.rdCrossBlending;
-        mGltfModel->initializeNodes();
+        mGltfModel->initializeNodes(mRenderData);
     }
     if(mRenderData.rdPlayAnimation)
     {

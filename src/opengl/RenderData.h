@@ -34,6 +34,7 @@ struct OGLRenderData
     int rdMoveUp                     = 0;
     float rdTickDiff                 = 0.0;
     int rdAnimationClipSize          = 0;
+    int rdNodeCount                  = 0;
 
     bool rdPlayAnimation                 = true;
     std::string rdClipName               = "None";

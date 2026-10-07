@@ -29,7 +29,7 @@ static void initializeFromBuffer(const tinygltf::Model& model, const int accesso
     memcpy(destination.data(), buffer.data.data() + bufferView.byteOffset, bufferView.byteLength);
 }
 
-int getAttributeIndex(std::string_view attribute)
+static int getAttributeIndex(std::string_view attribute)
 {
     return std::distance(std::begin(ATTRIBUTES), std::ranges::find(ATTRIBUTES, attribute));
 }
@@ -102,7 +102,7 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
 
     mJointMatrices.resize(mInverseBindMatrices.size());
 
-    initializeNodes();
+    initializeNodes(renderData);
 
     // mJointDualQuats.resize(skin.joints.size());
 
@@ -327,7 +327,7 @@ void GltfModel::crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, flo
     mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, IDENTITY_TRANSFORM, mJointMatrices);
 }
 
-void GltfModel::initializeNodes()
+void GltfModel::initializeNodes(OGLRenderData& renderData)
 {
     if(mModel)
     {
@@ -335,9 +335,17 @@ void GltfModel::initializeNodes()
 
         int const rootNode = nodes.at(0);
 
-        mNodes.resize(mModel->nodes.size());
+        int const nodeCount = mModel->nodes.size();
+
+        renderData.rdNodeCount = nodeCount;
+
+        mNodes.resize(nodeCount);
         mRootNode =
             GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices, mNodes);
+
         std::cout << *mRootNode << std::endl;
+
+        mAdditiveAnimationMask         = std::vector<bool>(nodeCount, true);
+        mInvertedAdditiveAnimationMask = std::vector<bool>(nodeCount, false);
     }
 }
