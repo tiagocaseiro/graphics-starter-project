@@ -121,8 +121,11 @@ void Renderer::draw()
 
     mViewMatrix = mCamera.getViewMatrix(mRenderData) * model;
 
-    mRenderData.rdClipName               = mGltfModel->getClipName(mRenderData.rdAnimClip);
-    mRenderData.rdCrossBlendDestAnimName = mGltfModel->getClipName(mRenderData.rdCrossBlendDestAnimClip);
+    mRenderData.rdClipName       = mGltfModel->getClipName(mRenderData.rdAnimClip);
+    mRenderData.rdAnimDurationMs = mGltfModel->getClipEndTime(mRenderData.rdAnimClip);
+
+    mRenderData.rdCrossBlendDestAnimName       = mGltfModel->getClipName(mRenderData.rdCrossBlendDestAnimClip);
+    mRenderData.rdCrossBlendDestAnimDurationMs = mGltfModel->getClipEndTime(mRenderData.rdCrossBlendDestAnimClip);
 
     static bool blendingChanged = mRenderData.rdCrossBlending;
 

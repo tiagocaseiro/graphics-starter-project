@@ -38,6 +38,7 @@ struct OGLRenderData
     bool rdPlayAnimation                 = true;
     std::string rdClipName               = "None";
     int rdAnimClip                       = 0;
+    float rdAnimDurationMs               = 0.0f;
     int rdAnimClipSize                   = 0;
     float rdAnimSpeed                    = 1.0f;
     float rdAnimTimePosition             = 0.0f;
@@ -45,6 +46,7 @@ struct OGLRenderData
     float rdAnimBlendFactor              = 1.0f;
     bool rdCrossBlending                 = true;
     int rdCrossBlendDestAnimClip         = 1;
+    float rdCrossBlendDestAnimDurationMs = 0.0f;
     std::string rdCrossBlendDestAnimName = "None";
     float rdAnimCrossBlendFactor         = 1.0f;
 

@@ -87,6 +87,8 @@ void UserInterface::createFrame(OGLRenderData& renderData)
 
         ImGui::Text("Clip Name: %s", renderData.rdClipName.c_str());
 
+        ImGui::Text("Clip Duration (ms): %f", renderData.rdAnimDurationMs);
+
         ImGui::Checkbox("Play Animation", &renderData.rdPlayAnimation);
 
         if(renderData.rdPlayAnimation == false)
@@ -155,6 +157,8 @@ void UserInterface::createFrame(OGLRenderData& renderData)
         ImGui::SameLine();
         ImGui::SliderInt("##DestClip", &renderData.rdCrossBlendDestAnimClip, 0, renderData.rdAnimationClipSize - 1);
         ImGui::Text("Dest Clip Name: %s", renderData.rdCrossBlendDestAnimName.c_str());
+
+        ImGui::Text("Clip Duration (ms): %f", renderData.rdCrossBlendDestAnimDurationMs);
 
         ImGui::Text("Cross Blend Factor");
         ImGui::SameLine();
