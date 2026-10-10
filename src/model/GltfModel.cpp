@@ -104,6 +104,8 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
 
     initializeNodes(renderData);
 
+    std::cout << *mRootNode << std::endl;
+
     resetAdditiveMasks();
 
     // mJointDualQuats.resize(skin.joints.size());
@@ -347,8 +349,6 @@ void GltfModel::initializeNodes(OGLRenderData& renderData)
         mNodes.resize(nodeCount);
         mRootNode =
             GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices, mNodes);
-
-        std::cout << *mRootNode << std::endl;
     }
 }
 

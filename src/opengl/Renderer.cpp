@@ -141,27 +141,31 @@ void Renderer::draw()
     }
 
     static bool additiveBlendingChanged = mRenderData.rdAdditiveBlending;
+    static int skelSplitNode            = mRenderData.rdSkelSplitNode;
 
     if(additiveBlendingChanged != mRenderData.rdAdditiveBlending)
     {
         additiveBlendingChanged = mRenderData.rdAdditiveBlending;
-        if(additiveBlendingChanged == false)
+        if(additiveBlendingChanged)
         {
-            mRenderData.rdSkelSplitNode = mRenderData.rdNodeCount - 1;
+            mRenderData.rdSkelSplitNodeName = mGltfModel->getNodeName(skelSplitNode);
+            mGltfModel->initializeNodes(mRenderData);
+            mGltfModel->setSkeletonSplitNode(skelSplitNode);
+        }
+        else
+        {
             mGltfModel->initializeNodes(mRenderData);
             mGltfModel->resetAdditiveMasks();
         }
     }
-
-    static int skelSplitNode = mRenderData.rdSkelSplitNode;
 
     if(skelSplitNode != mRenderData.rdSkelSplitNode)
     {
         skelSplitNode = mRenderData.rdSkelSplitNode;
 
         mRenderData.rdSkelSplitNodeName = mGltfModel->getNodeName(skelSplitNode);
-        mGltfModel->setSkeletonSplitNode(skelSplitNode);
         mGltfModel->initializeNodes(mRenderData);
+        mGltfModel->setSkeletonSplitNode(skelSplitNode);
     }
 
     if(mRenderData.rdPlayAnimation)
