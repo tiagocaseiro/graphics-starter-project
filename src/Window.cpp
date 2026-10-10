@@ -27,6 +27,16 @@ bool Window::init(const int width, const int height, const std::string& title)
         return false;
     }
 
+    int count;
+    GLFWmonitor** monitors = glfwGetMonitors(&count);
+    if(count > 1)
+    {
+        int xpos, ypos;
+        glfwGetMonitorPos(monitors[1], &xpos, &ypos);
+
+        glfwSetWindowPos(mWindow, xpos + 400, ypos + 50);
+    }
+
     glfwMakeContextCurrent(mWindow);
 
     glfwSetWindowUserPointer(mWindow, this);
