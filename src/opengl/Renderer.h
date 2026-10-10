@@ -5,6 +5,7 @@
 #include "ShaderStorageBuffer.h"
 #include "UserInterface.h"
 #include "VertexBuffer.h"
+#include "model/GltfModel.h"
 #include "tools/Camera.h"
 #include "tools/Macros.h"
 #include "tools/Timer.h"
@@ -41,7 +42,7 @@ private:
     std::shared_ptr<UniformBuffer> mUniformBuffer;
     std::shared_ptr<ShaderStorageBuffer<glm::mat4>> mShaderStorageBufferJointMatrices;
     // std::shared_ptr<ShaderStorageBuffer<glm::mat2x4>> mShaderStorageBufferJointDualQuats;
-    std::shared_ptr<GltfModel> mGltfModel;
+    GltfModelShared mGltfModel;
 
     glm::mat4 mViewMatrix       = glm::mat4(1.0);
     glm::mat4 mProjectionMatrix = glm::mat4(1.0);

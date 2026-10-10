@@ -168,6 +168,23 @@ void UserInterface::createFrame(OGLRenderData& renderData)
         {
             ImGui::EndDisabled();
         }
+
+        ImGui::Checkbox("Additive Blending: ", &renderData.rdAdditiveBlending);
+
+        if(renderData.rdAdditiveBlending == false)
+        {
+            ImGui::BeginDisabled();
+        }
+
+        ImGui::Text("Split Node: ");
+        ImGui::SameLine();
+        ImGui::SliderInt("##SplitNode", &renderData.rdSkelSplitNode, 0, renderData.rdNodeCount - 1);
+        ImGui::Text("Split Node Name: %s", renderData.rdSkelSplitNodeName.c_str());
+
+        if(renderData.rdAdditiveBlending == false)
+        {
+            ImGui::EndDisabled();
+        }
     }
 
     ImGui::End();

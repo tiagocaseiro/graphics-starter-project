@@ -104,6 +104,8 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
 
     initializeNodes(renderData);
 
+    resetAdditiveMasks();
+
     // mJointDualQuats.resize(skin.joints.size());
 
     // for(int i = 0; i != mJointMatrices.size(); i++)
@@ -307,7 +309,7 @@ float GltfModel::getClipEndTime(int animNum) const
 void GltfModel::blendAnimationFrame(int animNum, float time, float blendFactor)
 {
     GltfAnimationClip& animClip = mAnimClips[animNum];
-    animClip.blendAnimationFrame(mNodes, time, blendFactor);
+    animClip.blendAnimationFrame(mNodes, mAdditiveAnimationMask, time, blendFactor);
     mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, IDENTITY_TRANSFORM, mJointMatrices);
 }
 
@@ -321,8 +323,11 @@ void GltfModel::crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, flo
 
     float const scaledDestTime = time * (destAnimDuration / sourceAnimDuration);
 
-    sourceAnimClip.setAnimationFrame(mNodes, time);
-    destAnimClip.blendAnimationFrame(mNodes, scaledDestTime, blendFactor);
+    sourceAnimClip.setAnimationFrame(mNodes, mAdditiveAnimationMask, time);
+    destAnimClip.blendAnimationFrame(mNodes, mAdditiveAnimationMask, scaledDestTime, blendFactor);
+
+    destAnimClip.setAnimationFrame(mNodes, mInvertedAdditiveAnimationMask, scaledDestTime);
+    sourceAnimClip.blendAnimationFrame(mNodes, mInvertedAdditiveAnimationMask, time, blendFactor);
 
     mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, IDENTITY_TRANSFORM, mJointMatrices);
 }
@@ -344,8 +349,54 @@ void GltfModel::initializeNodes(OGLRenderData& renderData)
             GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices, mNodes);
 
         std::cout << *mRootNode << std::endl;
-
-        mAdditiveAnimationMask         = std::vector<bool>(nodeCount, true);
-        mInvertedAdditiveAnimationMask = std::vector<bool>(nodeCount, false);
     }
+}
+
+void GltfModel::updateAdditiveMask(GltfNode& node, int splitNodeNum)
+{
+    if(node.mNodeNum == splitNodeNum)
+    {
+        return;
+    }
+
+    mAdditiveAnimationMask[node.mNodeNum] = false;
+
+    for(GltfNodeShared child : node.Children())
+    {
+        if(child)
+        {
+            updateAdditiveMask(*child, splitNodeNum);
+        }
+    }
+}
+
+void GltfModel::setSkeletonSplitNode(int nodeNum)
+{
+    std::ranges::fill(mAdditiveAnimationMask, true);
+
+    if(mRootNode)
+    {
+        updateAdditiveMask(*mRootNode, nodeNum);
+    }
+
+    mInvertedAdditiveAnimationMask = mAdditiveAnimationMask;
+    mInvertedAdditiveAnimationMask.flip();
+}
+
+void GltfModel::resetAdditiveMasks()
+{
+    mAdditiveAnimationMask         = std::vector<bool>(mNodes.size(), true);
+    mInvertedAdditiveAnimationMask = std::vector<bool>(mNodes.size(), false);
+}
+
+std::string GltfModel::getNodeName(int nodeNum) const
+{
+    if(nodeNum < mNodes.size())
+    {
+        if(GltfNodeShared node = mNodes[nodeNum])
+        {
+            return node->mNodeName;
+        }
+    }
+    return "(Invalid)";
 }

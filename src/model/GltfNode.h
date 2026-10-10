@@ -47,7 +47,10 @@ public:
     void calculateTreeMatrices(const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
                                glm::mat4 const& parentMatrix, std::vector<glm::mat4>& jointMatrices);
 
+    std::vector<GltfNodeShared> const& Children() const { return mChildNodes; }
+
     const std::string mNodeName;
+    const int mNodeNum;
 
 private:
     static GltfNodeShared createNode(const std::shared_ptr<GltfNode> parent, const int nodeNum,
@@ -60,8 +63,6 @@ private:
     void printNode(std::ostream& os, int depth) const;
 
     std::vector<GltfNodeShared> mChildNodes;
-
-    const int mNodeNum;
 
     glm::vec3 mBlendScale       = DEFAULT_SCALE;
     glm::vec3 mBlendTranslation = DEFAULT_TRANSLATION;

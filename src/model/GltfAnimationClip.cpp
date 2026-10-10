@@ -19,7 +19,8 @@ GltfAnimationClip::GltfAnimationClip(std::string const& name, std::vector<GltfAn
 {
 }
 
-void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time) const
+void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nodes,
+                                          std::vector<bool> const& additiveAnimationMask, float time) const
 {
     for(GltfAnimationChannelShared const& channel : mChannels)
     {
@@ -30,7 +31,8 @@ void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nod
 
         int const targetNodeIndex = channel->mTargetNode;
 
-        if(targetNodeIndex >= nodes.size())
+        if(targetNodeIndex >= nodes.size() || targetNodeIndex >= additiveAnimationMask.size() ||
+           additiveAnimationMask[targetNodeIndex] == false)
         {
             continue;
         }
@@ -77,7 +79,8 @@ void GltfAnimationClip::setAnimationFrame(std::vector<GltfNodeShared> const& nod
     }
 }
 
-void GltfAnimationClip::blendAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time,
+void GltfAnimationClip::blendAnimationFrame(std::vector<GltfNodeShared> const& nodes,
+                                            std::vector<bool> const& additiveAnimationMask, float time,
                                             float blendFactor) const
 {
     for(GltfAnimationChannelShared const& channel : mChannels)
@@ -89,7 +92,8 @@ void GltfAnimationClip::blendAnimationFrame(std::vector<GltfNodeShared> const& n
 
         int const targetNodeIndex = channel->mTargetNode;
 
-        if(targetNodeIndex >= nodes.size())
+        if(targetNodeIndex >= nodes.size() || targetNodeIndex >= additiveAnimationMask.size() ||
+           additiveAnimationMask[targetNodeIndex] == false)
         {
             continue;
         }

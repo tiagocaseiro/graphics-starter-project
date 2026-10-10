@@ -14,9 +14,11 @@ public:
 
     float getClipEndTime() const;
 
-    void setAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time) const;
+    void setAnimationFrame(std::vector<GltfNodeShared> const& nodes, std::vector<bool> const& additiveAnimationMask,
+                           float time) const;
 
-    void blendAnimationFrame(std::vector<GltfNodeShared> const& nodes, float time, float blendFactor) const;
+    void blendAnimationFrame(std::vector<GltfNodeShared> const& nodes, std::vector<bool> const& additiveAnimationMask,
+                             float time, float blendFactor) const;
 
     void playAnimation(int animNum, float speedDivider) const;
 

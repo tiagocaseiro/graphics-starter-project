@@ -47,6 +47,14 @@ public:
 
     void initializeNodes(OGLRenderData& renderData);
 
+    void updateAdditiveMask(GltfNode& node, int splitNodeNum);
+
+    void setSkeletonSplitNode(int nodeNum);
+
+    void resetAdditiveMasks();
+
+    std::string getNodeName(int nodeNum) const;
+
 private:
     GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
               OGLRenderData& renderData);

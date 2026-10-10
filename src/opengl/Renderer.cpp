@@ -60,8 +60,8 @@ RendererShared Renderer::make(const int width, const int height, GLFWwindow* win
     return RendererShared(new Renderer(gltfShader, framebuffer, gltfModel, renderData));
 }
 
-Renderer::Renderer(const std::shared_ptr<Shader>& gltfShader, const Framebuffer& framebuffer,
-                   const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& renderData)
+Renderer::Renderer(const ShaderShared& gltfShader, const Framebuffer& framebuffer, const GltfModelShared& gltfModel,
+                   const OGLRenderData& renderData)
     : mGltfShader(gltfShader),
       mFramebuffer(framebuffer),
       mGltfModel(gltfModel),
@@ -132,8 +132,38 @@ void Renderer::draw()
     if(blendingChanged != mRenderData.rdCrossBlending)
     {
         blendingChanged = mRenderData.rdCrossBlending;
+        if(mRenderData.rdCrossBlending == false)
+        {
+            mRenderData.rdAdditiveBlending = false;
+        }
+
         mGltfModel->initializeNodes(mRenderData);
     }
+
+    static bool additiveBlendingChanged = mRenderData.rdAdditiveBlending;
+
+    if(additiveBlendingChanged != mRenderData.rdAdditiveBlending)
+    {
+        additiveBlendingChanged = mRenderData.rdAdditiveBlending;
+        if(additiveBlendingChanged == false)
+        {
+            mRenderData.rdSkelSplitNode = mRenderData.rdNodeCount - 1;
+            mGltfModel->initializeNodes(mRenderData);
+            mGltfModel->resetAdditiveMasks();
+        }
+    }
+
+    static int skelSplitNode = mRenderData.rdSkelSplitNode;
+
+    if(skelSplitNode != mRenderData.rdSkelSplitNode)
+    {
+        skelSplitNode = mRenderData.rdSkelSplitNode;
+
+        mRenderData.rdSkelSplitNodeName = mGltfModel->getNodeName(skelSplitNode);
+        mGltfModel->setSkeletonSplitNode(skelSplitNode);
+        mGltfModel->initializeNodes(mRenderData);
+    }
+
     if(mRenderData.rdPlayAnimation)
     {
         if(mRenderData.rdCrossBlending)
